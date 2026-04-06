@@ -1,0 +1,503 @@
+{
+  "name": "FinTrack",
+  "description": "Board operacional do MVP do FinTrack, organizado para fluxo Kanban com backlog refinado por cards pequenos e executaveis.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Card [SP:2]: Substituir app demo por shell inicial do FinTrack",
+          "desc": "Objetivo: remover a experiencia padrao do contador e iniciar o app com identidade basica do FinTrack.\n\nCriterios de aceite:\n- MaterialApp exibe nome e tema do FinTrack.\n- Tela inicial nao referencia mais o contador do template.\n- App abre em uma home placeholder valida.",
+          "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Ajustar lib/main.dart",
+                "Remover textos e widgets do exemplo padrao",
+                "Criar placeholders minimos para a tela inicial"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Fundacao do projeto" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Definir estrutura inicial de pastas do app",
+          "desc": "Objetivo: criar uma base de organizacao simples para crescimento do projeto.\n\nCriterios de aceite:\n- Estrutura de pastas criada em lib para app, features, shared e domain, ou equivalente enxuto.\n- Nomenclatura consistente e sem camadas artificiais.",
+          "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar estrutura inicial em lib",
+                "Mover widgets e arquivos para os lugares corretos",
+                "Manter o app compilando apos a reorganizacao"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Fundacao do projeto" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Criar tema base e tokens visuais iniciais",
+          "desc": "Objetivo: padronizar cores, tipografia e espacamentos iniciais.\n\nCriterios de aceite:\n- Tema centralizado em arquivo proprio.\n- App usa o tema centralizado em vez de valores espalhados.",
+          "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Extrair ThemeData",
+                "Definir esquema de cores inicial",
+                "Aplicar no MaterialApp"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Fundacao do projeto" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:1]: Trocar teste padrao por smoke test do FinTrack",
+          "desc": "Objetivo: remover o teste do contador e validar o novo bootstrap do app.\n\nCriterios de aceite:\n- Teste nao depende de contador nem icone de soma.\n- Teste valida que o app sobe com a identidade inicial esperada.",
+          "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Atualizar test/widget_test.dart",
+                "Executar flutter test"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "1" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Fundacao do projeto" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:1]: Definir estrategia de sessao mock",
+          "desc": "Objetivo: decidir o menor fluxo de autenticacao para o MVP sem backend real.\n\nCriterios de aceite:\n- Fluxo documentado de forma simples: entrar, permanecer logado em memoria e sair.\n- Regras de navegacao apos login definidas.",
+          "idLabels": ["lab_sprint_1", "lab_area_auth", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Descrever estados da sessao",
+                "Decidir se havera usuario fake fixo ou formulario simples"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "1" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Autenticacao mock" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Criar tela de login mock",
+          "desc": "Objetivo: permitir entrada no app por uma tela inicial simples.\n\nCriterios de aceite:\n- Tela possui campos ou acao minima para entrar.\n- Interface informa claramente que se trata de fluxo mock.",
+          "idLabels": ["lab_sprint_1", "lab_area_auth", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar tela de login",
+                "Adicionar validacoes minimas de UX",
+                "Conectar navegacao para a shell principal"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Autenticacao mock" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Implementar estado local de autenticacao",
+          "desc": "Objetivo: controlar sessao mock dentro do app.\n\nCriterios de aceite:\n- App distingue usuario autenticado de nao autenticado.\n- Logout retorna para a tela de login.",
+          "idLabels": ["lab_sprint_1", "lab_area_auth", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar controlador simples de sessao",
+                "Expor estado para a arvore de widgets"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Autenticacao mock" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Cobrir fluxo basico de login/logout",
+          "desc": "Objetivo: proteger o fluxo principal com teste de widget.\n\nCriterios de aceite:\n- Teste valida entrada no app.\n- Teste valida retorno para login ao sair.",
+          "idLabels": ["lab_sprint_1", "lab_area_auth", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar teste do fluxo mock",
+                "Manter testes existentes verdes"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Autenticacao mock" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:1]: Definir tabs e arquitetura de navegacao do MVP",
+          "desc": "Objetivo: fechar a navegacao minima antes de criar telas definitivas.\n\nCriterios de aceite:\n- Tabs ou destinos principais definidos.\n- Navegacao escolhida cabe no escopo atual do app.",
+          "idLabels": ["lab_sprint_1", "lab_area_navigation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Decidir rotas principais",
+                "Decidir se navegacao sera por bottom navigation"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "1" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Shell e navegacao principal" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Implementar shell principal com navegacao inferior",
+          "desc": "Objetivo: criar o contorno principal da experiencia apos login.\n\nCriterios de aceite:\n- Shell possui areas principais do MVP.\n- Troca de abas funciona sem quebrar estado basico.",
+          "idLabels": ["lab_sprint_1", "lab_area_navigation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar widget shell",
+                "Adicionar destinos placeholder para transacoes e dashboard"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Shell e navegacao principal" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Criar placeholders de telas principais",
+          "desc": "Objetivo: deixar navegacao pronta para receber features reais.\n\nCriterios de aceite:\n- Existe ao menos uma tela de lista de transacoes e uma tela de dashboard placeholder.\n- Titulos e hierarquia visual estao coerentes.",
+          "idLabels": ["lab_sprint_1", "lab_area_navigation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar telas placeholder",
+                "Ligar as telas ao shell"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Shell e navegacao principal" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Modelar entidade Transaction",
+          "desc": "Objetivo: definir a estrutura minima do dominio financeiro.\n\nCriterios de aceite:\n- Entidade contempla tipo, valor, data, descricao e categoria inicial ou placeholder.\n- Nomeacao coerente com o dominio do app.",
+          "idLabels": ["lab_sprint_1", "lab_area_transactions", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar modelo de dominio",
+                "Decidir representacao de receita e despesa"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "CRUD de transacoes" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Implementar repositorio em memoria para transacoes",
+          "desc": "Objetivo: viabilizar CRUD antes da persistencia local.\n\nCriterios de aceite:\n- Adicionar, listar, editar e remover funcionam em memoria.\n- Camada pode ser substituida depois por persistencia local.",
+          "idLabels": ["lab_sprint_1", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar interface simples para fonte de dados",
+                "Criar implementacao em memoria"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "CRUD de transacoes" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Criar tela de listagem de transacoes vazia e populada",
+          "desc": "Objetivo: mostrar o estado inicial da feature e a lista de itens quando houver dados.\n\nCriterios de aceite:\n- Tela exibe estado vazio amigavel sem transacoes.\n- Tela lista transacoes quando houver dados.",
+          "idLabels": ["lab_sprint_1", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar widget de lista",
+                "Criar empty state"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "CRUD de transacoes" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:5]: Criar formulario de nova transacao",
+          "desc": "Objetivo: permitir cadastro de receita e despesa.\n\nCriterios de aceite:\n- Usuario consegue informar tipo, valor, descricao e data.\n- Validacoes impedem salvar dados invalidos.",
+          "idLabels": ["lab_sprint_1", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar formulario",
+                "Validar campos obrigatorios",
+                "Integrar com repositorio em memoria"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "5" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "CRUD de transacoes" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Implementar edicao e exclusao de transacao",
+          "desc": "Objetivo: completar o CRUD do MVP.\n\nCriterios de aceite:\n- Usuario consegue editar item existente.\n- Usuario consegue remover item com confirmacao simples.",
+          "idLabels": ["lab_sprint_1", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Adicionar acao de editar",
+                "Adicionar acao de excluir",
+                "Refletir mudancas na listagem"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "CRUD de transacoes" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Cobrir CRUD basico com testes",
+          "desc": "Objetivo: proteger o fluxo central do produto.\n\nCriterios de aceite:\n- Teste cobre cadastro.\n- Teste cobre edicao ou exclusao.",
+          "idLabels": ["lab_sprint_1", "lab_area_transactions", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Adicionar testes de widget ou unidade",
+                "Validar estados vazio e populado"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "CRUD de transacoes" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pronto para puxar",
+      "cards": []
+    },
+    {
+      "name": "Em andamento",
+      "cards": []
+    },
+    {
+      "name": "Revisao/Testes",
+      "cards": []
+    },
+    {
+      "name": "Concluido",
+      "cards": []
+    }
+  ]
+}

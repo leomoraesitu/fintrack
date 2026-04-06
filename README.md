@@ -108,6 +108,24 @@ macos/     Target macOS
 - validar fluxos críticos da aplicação a cada nova entrega
 - evoluir a base do projeto com foco em manutenção, escalabilidade e consistência técnica
 
+## Documentação detalhada
+
+Para continuidade do projeto, a documentação complementar está centralizada na pasta `docs/`.
+
+- visão geral da documentação em `docs/README.md`
+- visão do produto em `docs/product/product-vision.md`
+- escopo do MVP em `docs/product/mvp-scope.md`
+- backlog em alto nível em `docs/product/backlog-overview.md`
+- arquitetura em `docs/engineering/architecture.md`
+- estrutura do projeto em `docs/engineering/project-structure.md`
+- padrões de código em `docs/engineering/coding-standards.md`
+- gerenciamento de estado em `docs/engineering/state-management.md`
+- estratégia de testes em `docs/engineering/testing-strategy.md`
+- fluxo de desenvolvimento em `docs/engineering/development-workflow.md`
+- decisões técnicas em `docs/adr/`
+- especificações funcionais em `docs/features/`
+- evolução futura em `docs/future/`
+
 ## Por que este projeto
 
 Este repositório faz parte de um portfólio em Flutter e está sendo desenvolvido para demonstrar fundamentos de desenvolvimento mobile, visão de produto e a evolução de um projeto desde a configuração inicial até uma aplicação de finanças utilizável.
