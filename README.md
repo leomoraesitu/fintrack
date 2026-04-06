@@ -192,6 +192,7 @@ macos/     Target macOS
 
 Para continuidade do projeto, a documentação complementar está centralizada na pasta [docs/](docs/).
 
+- guia de contribuição em [CONTRIBUTING.md](CONTRIBUTING.md)
 - visão geral da documentação em [docs/README.md](docs/README.md)
 - visão do produto em [docs/product/product-vision.md](docs/product/product-vision.md)
 - escopo do MVP em [docs/product/mvp-scope.md](docs/product/mvp-scope.md)
