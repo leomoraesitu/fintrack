@@ -1,0 +1,79 @@
+{
+  "name": "FinTrack",
+  "description": "Importacao de um card avulso referente a sessao de UX/UI registrada como insumo de implementacao.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_source",
+      "display": { "cardFront": true },
+      "name": "Fonte",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Card [SP:2]: Usar handoff de UX/UI como referencia de implementacao do MVP",
+          "desc": "Objetivo: registrar a sessao de UX/UI como insumo operacional para orientar a implementacao das telas e componentes do MVP do FinTrack.\n\nUso esperado:\n- consultar o handoff antes de implementar login mock, shell principal, dashboard e transacoes\n- usar o design system como guia de tema, componentes e tokens\n- usar a especificacao de telas como referencia de composicao e hierarquia visual\n\nCriterios de aceite:\n- O time sabe onde consultar a referencia visual oficial do MVP.\n- O card aponta para os documentos corretos em docs/design.\n- O insumo fica classificado no fluxo operacional sem virar um epico.",
+          "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Referencias da sessao",
+              "items": [
+                "Consultar docs/design/README.md como indice de entrada",
+                "Consultar docs/design/ff-designer-handoff.md para mapeamento entre frames e features",
+                "Consultar docs/design/design-system.md para tokens e padroes visuais",
+                "Consultar docs/design/screen-specs.md para composicao das telas",
+                "Usar docs/design/assets/frames/light/ e docs/design/assets/frames/dark/ para comparacao visual"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Fundacao do projeto" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sessao UX/UI anexada + docs/design" },
+              "idValue": null,
+              "idCustomField": "cf_source"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

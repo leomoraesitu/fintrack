@@ -1,0 +1,80 @@
+{
+  "name": "FinTrack",
+  "description": "Importacao de um card avulso referente a consolidacao do contexto de UX/UI e da documentacao visual do projeto.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_source",
+      "display": { "cardFront": true },
+      "name": "Fonte",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Concluido",
+      "cards": [
+        {
+          "name": "Card [SP:5]: Consolidar handoff de UX/UI e especificacao visual do MVP",
+          "desc": "Objetivo: transformar o contexto da sessao de UX/UI em referencia visual utilizavel para implementacao, revisao de interface e validacao do MVP do FinTrack.\n\nResultado consolidado:\n- Handoff do prototipo do FlutterFlow Designer documentado.\n- Design system observado e convertido em orientacoes de implementacao.\n- Especificacao de telas do fluxo principal registrada em PT-BR.\n- Estrutura de assets e frames light/dark organizada dentro de docs/design.\n\nCriterios de aceite:\n- Existe indice de design centralizando os documentos do prototipo.\n- O escopo visual do MVP cobre login, shell principal, dashboard, lista de transacoes, filtros, criar/editar transacao, confirmacao de exclusao e estados de interface.\n- O handoff liga frames a documentos funcionais do projeto.\n- O design system orienta tokens, componentes e regras de implementacao.",
+          "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_area_auth", "lab_area_navigation", "lab_area_transactions", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Entregas da sessao",
+              "items": [
+                "Documentar a origem do prototipo em docs/design/README.md",
+                "Registrar o handoff do FF Designer em docs/design/ff-designer-handoff.md",
+                "Consolidar tokens e padroes visuais em docs/design/design-system.md",
+                "Especificar a composicao das telas em docs/design/screen-specs.md",
+                "Mapear o escopo visual do MVP para login, shell, dashboard e transacoes",
+                "Registrar a existencia dos frames light e dark em docs/design/assets/frames/"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "5" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Fundacao do projeto" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sessao UX/UI anexada + docs/design" },
+              "idValue": null,
+              "idCustomField": "cf_source"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

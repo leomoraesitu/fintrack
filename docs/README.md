@@ -2,6 +2,17 @@
 
 Esta pasta centraliza a documentacao de continuidade do projeto.
 
+## Como usar esta documentacao
+
+Use este indice como ponto de entrada para navegar entre produto, engenharia, design, decisoes tecnicas e evolucao futura.
+
+Fluxo recomendado:
+
+1. entender o produto e o escopo do MVP
+2. revisar arquitetura, estrutura e workflow
+3. consultar design e especificacoes de tela antes da implementacao de UI
+4. usar ADRs e features como referencia de decisao e comportamento
+
 ## Estrutura
 
 ### Produto
@@ -33,6 +44,14 @@ Esta pasta centraliza a documentacao de continuidade do projeto.
 - [Dashboard](./features/dashboard.md)
 - [Categorias e filtros](./features/categories-and-filters.md)
 
+### Design
+
+- [Visao geral de design](./design/README.md)
+- [Handoff do FF Designer](./design/ff-designer-handoff.md)
+- [Design system](./design/design-system.md)
+- [Especificacao de telas](./design/screen-specs.md)
+- [Inventario de assets](./design/assets-inventory.md)
+
 ### Evolucao futura
 
 - [Backend e sincronizacao](./future/backend-and-sync.md)
@@ -47,7 +66,8 @@ Esta pasta centraliza a documentacao de continuidade do projeto.
 4. Estrutura do projeto
 5. Gerenciamento de estado
 6. Fluxo de desenvolvimento
-7. Visao geral do backlog
-8. Features
-9. ADRs
-10. Documentos futuros
+7. Visao geral de design
+8. Visao geral do backlog
+9. Features
+10. ADRs
+11. Documentos futuros
