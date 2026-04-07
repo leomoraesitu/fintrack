@@ -1,3 +1,4 @@
+import 'package:fintrack/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class FinTrackApp extends StatelessWidget {
@@ -7,14 +8,8 @@ class FinTrackApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FinTrack',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('Welcome to FinTrack!'),
-        ),
-      ),
+      theme: AppTheme.light(),
+      home: const Scaffold(body: Center(child: Text('Welcome to FinTrack!'))),
     );
   }
 }
