@@ -1,5 +1,6 @@
 import 'package:fintrack/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:fintrack/features/shell/presentation/pages/shell_page.dart';
 
 class FinTrackApp extends StatelessWidget {
   const FinTrackApp({super.key});
@@ -9,7 +10,7 @@ class FinTrackApp extends StatelessWidget {
     return MaterialApp(
       title: 'FinTrack',
       theme: AppTheme.light(),
-      home: const Scaffold(body: Center(child: Text('Welcome to FinTrack!'))),
+      home: const ShellPage()
     );
   }
 }
