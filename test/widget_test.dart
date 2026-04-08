@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fintrack/app/app.dart';
 
 void main() {
-  testWidgets('deve iniciar na login page e navegar para a shell no modo demo', (
+  testWidgets('deve iniciar na login page, navegar para a shell no modo demo e voltar para a login page ao sair', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const FinTrackApp());
@@ -24,11 +24,12 @@ void main() {
     expect(find.text('Transações'), findsOneWidget);
     expect(find.text('Resumo financeiro em construção'), findsOneWidget);
     expect(find.byIcon(Icons.add), findsOneWidget);
+    expect(find.byIcon(Icons.logout), findsOneWidget);
 
-    await tester.tap(find.text('Transações'));
+    await tester.tap(find.byTooltip('Sair'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Lista de transações em construção'), findsOneWidget);
-    expect(find.text('Resumo financeiro em construção'), findsNothing);
+    expect(find.text('Bem-vindo'), findsOneWidget);
+    expect(find.text('Entrar no modo demo'), findsOneWidget);
   });
 }

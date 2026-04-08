@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ShellPage extends StatefulWidget {
-  const ShellPage({super.key});
+  const ShellPage({super.key, this.onLogout});
+  final VoidCallback? onLogout;
 
   @override
   State<ShellPage> createState() => _ShellPageState();
@@ -22,9 +23,9 @@ class _ShellPageState extends State<ShellPage> {
         title: const Text('FinTrack'),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.person_outline),
-            tooltip: 'Perfil',
+            onPressed: widget.onLogout,
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
           ),
         ],
       ),
