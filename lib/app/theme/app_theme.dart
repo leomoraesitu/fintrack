@@ -41,6 +41,45 @@ class AppTheme {
         unselectedItemColor: Colors.black54,
         type: BottomNavigationBarType.fixed,
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: _surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+      textTheme : TextTheme(
+        headlineLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          color: Colors.black87,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 12,
+          color: Colors.black54,
+        ),
+      ),
     );
   }
 }
