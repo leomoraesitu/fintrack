@@ -1,8 +1,10 @@
+import 'package:fintrack/features/transactions/presentation/pages/transactions_page.dart';
 import 'package:flutter/material.dart';
 
 class ShellPage extends StatefulWidget {
   const ShellPage({super.key, this.onLogout});
   final VoidCallback? onLogout;
+  
 
   @override
   State<ShellPage> createState() => _ShellPageState();
@@ -11,10 +13,16 @@ class ShellPage extends StatefulWidget {
 class _ShellPageState extends State<ShellPage> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    _DashboardPlaceholder(),
-    _TransactionsPlaceholder(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const _DashboardPlaceholder(),
+      const TransactionsPage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +71,6 @@ class _DashboardPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Resumo financeiro em construção'),
-    );
-  }
-}
-
-class _TransactionsPlaceholder extends StatelessWidget {
-  const _TransactionsPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Lista de transações em construção'),
-    );
+    return const Center(child: Text('Resumo financeiro em construção'));
   }
 }

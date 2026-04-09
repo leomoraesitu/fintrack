@@ -2,7 +2,10 @@ import 'package:fintrack/features/transactions/domain/entities/transaction.dart'
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 
 class InMemoryTransactionRepository implements TransactionRepository {
-  final List<Transaction> _transactions = [];
+  InMemoryTransactionRepository({List<Transaction>? initialTransactions})
+    : _transactions = List<Transaction>.from(initialTransactions ?? []);
+
+  final List<Transaction> _transactions;
 
   @override
   List<Transaction> getTransactions() {
