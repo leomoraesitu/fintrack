@@ -1,11 +1,10 @@
-import 'package:fintrack/features/transactions/presentation/pages/create_transaction_page.dart';
+import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transactions_page.dart';
 import 'package:flutter/material.dart';
 
 class ShellPage extends StatefulWidget {
   const ShellPage({super.key, this.onLogout});
   final VoidCallback? onLogout;
-  
 
   @override
   State<ShellPage> createState() => _ShellPageState();
@@ -24,11 +23,9 @@ class _ShellPageState extends State<ShellPage> {
     }
   }
 
-  Future<void> _openCreateTransactionPage() async {
+  Future<void> _openTransactionFormPage() async {
     final result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => const CreateTransactionPage(),
-      ),
+      MaterialPageRoute(builder: (_) => const TransactionFormPage()),
     );
 
     if (result == true) {
@@ -53,7 +50,7 @@ class _ShellPageState extends State<ShellPage> {
       ),
       body: _buildCurrentPage(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _openCreateTransactionPage,
+        onPressed: _openTransactionFormPage,
         tooltip: 'Nova transação',
         child: const Icon(Icons.add),
       ),

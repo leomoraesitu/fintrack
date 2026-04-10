@@ -1,3 +1,5 @@
+import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
+import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
 import 'package:fintrack/features/transactions/presentation/widgets/transaction_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,9 +23,14 @@ class TransactionsPage extends StatelessWidget {
   }
 }
 
-class _TransactionsView extends StatelessWidget {
+class _TransactionsView extends StatefulWidget {
   const _TransactionsView();
 
+  @override
+  State<_TransactionsView> createState() => _TransactionsViewState();
+}
+
+class _TransactionsViewState extends State<_TransactionsView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TransactionListBloc, TransactionListState>(
@@ -40,13 +47,18 @@ class _TransactionsView extends StatelessWidget {
         }
 
         if (state is TransactionListSuccess) {
+          final transactions = state.transactions;
+
           return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: state.transactions.length,
+            itemCount: transactions.length,
             separatorBuilder: (_, _) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
-              final transaction = state.transactions[index];
-              return TransactionListItem(transaction: transaction);
+              final transaction = transactions[index];
+              return TransactionListItem(
+                transaction: transaction,
+                onTap: () => _openTransactionForm(context, transaction),
+              );
             },
           );
         }
@@ -54,5 +66,22 @@ class _TransactionsView extends StatelessWidget {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  Future<void> _openTransactionForm(
+    BuildContext context,
+    Transaction transaction,
+  ) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TransactionFormPage(transaction: transaction),
+      ),
+    );
+
+    if (!context.mounted) return;
+
+    if (result == true) {
+      context.read<TransactionListBloc>().add(const TransactionListRequested());
+    }
   }
 }

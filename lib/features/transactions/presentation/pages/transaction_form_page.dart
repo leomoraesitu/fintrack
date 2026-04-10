@@ -6,33 +6,59 @@ import 'package:fintrack/features/transactions/presentation/bloc/transaction_for
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CreateTransactionPage extends StatelessWidget {
-  const CreateTransactionPage({super.key});
+class TransactionFormPage extends StatelessWidget {
+  const TransactionFormPage({super.key, this.transaction});
+
+  final Transaction? transaction;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          TransactionFormBloc(repository: context.read<TransactionRepository>()),
-      child: const _CreateTransactionView(),
+      create: (context) => TransactionFormBloc(
+        repository: context.read<TransactionRepository>(),
+      ),
+      child: _TransactionFormView(transaction: transaction),
     );
   }
 }
 
-class _CreateTransactionView extends StatefulWidget {
-  const _CreateTransactionView();
+class _TransactionFormView extends StatefulWidget {
+  const _TransactionFormView({this.transaction});
+
+  final Transaction? transaction;
 
   @override
-  State<_CreateTransactionView> createState() => _CreateTransactionViewState();
+  State<_TransactionFormView> createState() => _TransactionFormViewState();
 }
 
-class _CreateTransactionViewState extends State<_CreateTransactionView> {
+class _TransactionFormViewState extends State<_TransactionFormView> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _categoryController = TextEditingController();
-  TransactionType _selectedType = TransactionType.expense;
-  DateTime _selectedDate = DateTime.now();
+
+  late TransactionType _selectedType;
+  late DateTime _selectedDate;
+
+  bool get isEditing => widget.transaction != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final t = widget.transaction;
+
+    if (t != null) {
+      _amountController.text = t.amount.toStringAsFixed(2);
+      _descriptionController.text = t.description;
+      _categoryController.text = t.category;
+      _selectedType = t.type;
+      _selectedDate = t.date;
+    } else {
+      _selectedType = TransactionType.expense;
+      _selectedDate = DateTime.now();
+    }
+  }
 
   @override
   void dispose() {
@@ -68,14 +94,16 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
     final amount = double.tryParse(normalizedAmount);
 
     if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Informe um valor valido.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Informe um valor valido.')));
       return;
     }
 
     final transaction = Transaction(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id:
+          widget.transaction?.id ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       type: _selectedType,
       amount: amount,
       date: _selectedDate,
@@ -83,9 +111,11 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
       category: _categoryController.text.trim(),
     );
 
-    context.read<TransactionFormBloc>().add(
-      TransactionFormSubmitted(transaction: transaction),
-    );
+    if (isEditing) {
+      context.read<TransactionFormBloc>().add(TransactionUpdated(transaction));
+    } else {
+      context.read<TransactionFormBloc>().add(TransactionCreated(transaction));
+    }
   }
 
   String _formatDate(DateTime value) {
@@ -100,19 +130,39 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
     return BlocListener<TransactionFormBloc, TransactionFormState>(
       listener: (context, state) {
         if (state is TransactionFormSuccess) {
+          if (!context.mounted) return;
+
           Navigator.of(context).pop(true);
-          return;
         }
 
         if (state is TransactionFormError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Nova transacao'),
+          title: Text(isEditing ? 'Editar transação' : 'Nova transação'),
+          actions: [
+            if (isEditing)
+              BlocBuilder<TransactionFormBloc, TransactionFormState>(
+                builder: (context, state) {
+                  final isSubmitting = state is TransactionFormSubmitting;
+
+                  return IconButton(
+                    icon: isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.delete),
+                    onPressed: isSubmitting ? null : _confirmDelete,
+                  );
+                },
+              ),
+          ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -123,14 +173,13 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Preencha os dados para adicionar uma transacao.',
+                    isEditing
+                        ? 'Edite os dados da transação.'
+                        : 'Preencha os dados para adicionar uma transação.',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 24),
-                  Text(
-                    'Tipo',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
+                  Text('Tipo', style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: 8),
                   SegmentedButton<TransactionType>(
                     segments: const [
@@ -173,9 +222,7 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Descricao',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Descricao'),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Informe a descricao.';
@@ -187,9 +234,7 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _categoryController,
-                    decoration: const InputDecoration(
-                      labelText: 'Categoria',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Categoria'),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Informe a categoria.';
@@ -211,22 +256,30 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
-                    child: BlocBuilder<TransactionFormBloc, TransactionFormState>(
-                      builder: (context, state) {
-                        final isSubmitting = state is TransactionFormSubmitting;
+                    child:
+                        BlocBuilder<TransactionFormBloc, TransactionFormState>(
+                          builder: (context, state) {
+                            final isSubmitting =
+                                state is TransactionFormSubmitting;
 
-                        return ElevatedButton(
-                          onPressed: isSubmitting ? null : _submit,
-                          child: isSubmitting
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Text('Salvar transacao'),
-                        );
-                      },
-                    ),
+                            return ElevatedButton(
+                              onPressed: isSubmitting ? null : _submit,
+                              child: isSubmitting
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      isEditing
+                                          ? 'Salvar alterações'
+                                          : 'Salvar transação',
+                                    ),
+                            );
+                          },
+                        ),
                   ),
                 ],
               ),
@@ -235,5 +288,45 @@ class _CreateTransactionViewState extends State<_CreateTransactionView> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDelete() async {
+    final transaction = widget.transaction;
+    if (transaction == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Excluir transação'),
+          content: Text(
+            'Deseja excluir "${transaction.description}" '
+            'de R\$ ${transaction.amount.toStringAsFixed(2)}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Excluir'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    _delete();
+  }
+
+  void _delete() {
+    final transaction = widget.transaction;
+    if (transaction == null) return;
+
+    context.read<TransactionFormBloc>().add(TransactionDeleted(transaction.id));
   }
 }
