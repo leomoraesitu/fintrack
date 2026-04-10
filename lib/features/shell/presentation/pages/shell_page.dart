@@ -1,3 +1,4 @@
+import 'package:fintrack/features/transactions/presentation/pages/create_transaction_page.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transactions_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,15 +14,28 @@ class ShellPage extends StatefulWidget {
 class _ShellPageState extends State<ShellPage> {
   int _currentIndex = 0;
 
-  late final List<Widget> _pages;
+  Widget _buildCurrentPage() {
+    switch (_currentIndex) {
+      case 1:
+        return const TransactionsPage();
+      case 0:
+      default:
+        return const _DashboardPlaceholder();
+    }
+  }
 
-  @override
-  void initState() {
-    super.initState();
-    _pages = [
-      const _DashboardPlaceholder(),
-      const TransactionsPage(),
-    ];
+  Future<void> _openCreateTransactionPage() async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => const CreateTransactionPage(),
+      ),
+    );
+
+    if (result == true) {
+      setState(() {
+        _currentIndex = 1;
+      });
+    }
   }
 
   @override
@@ -37,9 +51,9 @@ class _ShellPageState extends State<ShellPage> {
           ),
         ],
       ),
-      body: _pages[_currentIndex],
+      body: _buildCurrentPage(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _openCreateTransactionPage,
         tooltip: 'Nova transação',
         child: const Icon(Icons.add),
       ),
