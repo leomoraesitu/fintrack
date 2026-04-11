@@ -1,0 +1,301 @@
+{
+  "name": "FinTrack",
+  "description": "Cards da Sprint 2 para importacao no Trello, focados em categorias, dashboard e conexao dos fluxos principais do MVP.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_scope_note",
+      "display": { "cardFront": false },
+      "name": "Escopo",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Card [SP:2]: Definir categorias padrao do MVP",
+          "desc": "Objetivo: estabelecer o conjunto inicial de categorias que sera usado nas transacoes do MVP.\n\nCriterios de aceite:\n- Existe uma lista inicial de categorias padrao para receitas e despesas.\n- A convencao de identificacao das categorias e previsivel e estavel.\n- A lista atende o fluxo de criacao, edicao e filtro sem depender de backend.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Definir conjunto inicial de categorias padrao",
+                "Decidir convencao de identificacao ou slug das categorias",
+                "Documentar a lista inicial para uso no dominio e na UI"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Categorias" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Adaptar entidade e repositorio para suportar categoria",
+          "desc": "Objetivo: incluir categoria na modelagem de transacoes e propagar esse dado pelo repositorio atual.\n\nCriterios de aceite:\n- Entidade de transacao contempla categoria de forma clara.\n- Repositorio em memoria consegue persistir categoria no ciclo de vida do item.\n- Operacoes de criar e editar preservam a categoria corretamente.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Atualizar modelo de transacao para incluir categoria",
+                "Adaptar contratos e implementacao do repositorio em memoria",
+                "Garantir compatibilidade com os fluxos de criar e editar transacao"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Categorias" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Integrar selecao de categoria ao formulario de transacao",
+          "desc": "Objetivo: permitir que o usuario associe uma categoria padrao ao criar ou editar transacoes.\n\nCriterios de aceite:\n- Formulario de criar transacao permite selecionar categoria.\n- Fluxo de editar transacao preserva e altera a categoria atual.\n- A hierarquia visual do formulario continua coerente com a especificacao de telas.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Adicionar seletor de categoria ao formulario de criacao",
+                "Adicionar suporte de categoria ao formulario de edicao",
+                "Conectar a selecao ao estado e ao repositorio"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Categorias" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Modelar resumo financeiro do dashboard",
+          "desc": "Objetivo: definir a estrutura de resumo que alimenta saldo, receitas e despesas do periodo.\n\nCriterios de aceite:\n- Modelo de resumo contempla saldo consolidado, total de receitas e total de despesas.\n- Estrutura suporta reagir a mudancas no conjunto de transacoes.\n- Nomeacao e responsabilidade permanecem alinhadas ao dominio.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar modelo de resumo financeiro",
+                "Definir campos minimos para saldo, receitas e despesas",
+                "Preparar estrutura para uso pelo estado do dashboard"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Dashboard" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Implementar caso de uso de resumo financeiro",
+          "desc": "Objetivo: calcular o resumo do dashboard a partir das transacoes disponiveis no app.\n\nCriterios de aceite:\n- Caso de uso retorna saldo consolidado, total de receitas e total de despesas.\n- Resultado reage a alteracoes no conjunto de transacoes.\n- Estado vazio e tratado sem falha quando nao houver dados.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Implementar calculo do resumo a partir do repositorio de transacoes",
+                "Tratar ausencia de transacoes sem quebrar o fluxo",
+                "Expor o resultado para consumo pela camada de apresentacao"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Dashboard" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Construir tela de dashboard com saldo e cards resumo",
+          "desc": "Objetivo: substituir o placeholder do dashboard por uma tela funcional com hero de saldo e resumo do periodo.\n\nCriterios de aceite:\n- Dashboard exibe saldo consolidado com destaque visual.\n- Dashboard exibe total de receitas e despesas do periodo.\n- Layout segue a referencia visual documentada para o MVP.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar composicao principal da tela de dashboard",
+                "Renderizar card hero de saldo e cards resumo",
+                "Conectar a tela ao estado ou caso de uso de resumo financeiro"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Dashboard" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Exibir transacoes recentes e CTA de listagem no dashboard",
+          "desc": "Objetivo: completar o dashboard com contexto util de navegacao e acesso rapido ao fluxo de transacoes.\n\nCriterios de aceite:\n- Dashboard exibe uma secao de transacoes recentes quando houver dados.\n- Estado vazio do dashboard continua compreensivel quando nao houver transacoes.\n- Acao de ver todas leva o usuario para a listagem principal.",
+          "idLabels": ["lab_sprint_2", "lab_area_navigation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Adicionar secao de transacoes recentes ao dashboard",
+                "Exibir CTA para abrir a listagem completa",
+                "Ligar a acao ao fluxo principal de navegacao"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Dashboard" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Cobrir categorias e resumo do dashboard com testes",
+          "desc": "Objetivo: proteger o incremento principal da Sprint 2 com validacao automatizada do dominio e dos fluxos essenciais.\n\nCriterios de aceite:\n- Existe teste para o comportamento basico de categorias nas transacoes.\n- Existe teste para o calculo do resumo financeiro.\n- Fluxos principais da Sprint 2 nao dependem apenas de validacao manual.",
+          "idLabels": ["lab_sprint_2", "lab_area_transactions", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Adicionar testes para categoria em criar ou editar transacao",
+                "Adicionar testes para calculo de saldo, receitas e despesas",
+                "Validar estados vazio e populado do dashboard quando fizer sentido"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Dashboard" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 2 prioriza categorias e dashboard; filtros completos ficam para Sprint 3." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
