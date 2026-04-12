@@ -30,7 +30,12 @@ void main() {
 
       await tester.enterText(find.byType(TextFormField).at(0), '45,90');
       await tester.enterText(find.byType(TextFormField).at(1), 'Farmacia');
-      await tester.enterText(find.byType(TextFormField).at(2), 'Saude');
+
+      await tester.tap(find.text('Categoria'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Saúde').last);
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Salvar transação'));
       await tester.pumpAndSettle();
@@ -39,6 +44,7 @@ void main() {
       expect(find.text('Supermercado'), findsOneWidget);
       expect(find.text('Transporte'), findsOneWidget);
       expect(find.text('Farmacia'), findsOneWidget);
+      expect(find.textContaining('Saúde'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Sair'));
       await tester.pumpAndSettle();
@@ -70,6 +76,8 @@ void main() {
     expect(find.text('Editar transação'), findsOneWidget);
     expect(find.text('Salvar alterações'), findsOneWidget);
 
+    expect(find.text('Alimentação'), findsOneWidget);
+
     await tester.enterText(
       find.byType(TextFormField).at(1),
       'Mercado do bairro',
@@ -97,4 +105,63 @@ void main() {
     expect(find.text('Salário'), findsOneWidget);
     expect(find.text('Transporte'), findsOneWidget);
   });
+
+  testWidgets(
+    'deve limpar categoria incompatível ao trocar o tipo da transação',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const FinTrackApp());
+
+      await tester.tap(find.text('Entrar no modo demo'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Transações'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Supermercado'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Editar transação'), findsOneWidget);
+      expect(find.text('Alimentação'), findsOneWidget);
+
+      await tester.tap(find.text('Receita'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Salvar alterações'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Selecione a categoria.'), findsOneWidget);
+      expect(find.text('Editar transação'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'deve editar a categoria de uma transacao existente e refletir a alteracao na lista',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const FinTrackApp());
+
+      await tester.tap(find.text('Entrar no modo demo'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Transações'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Supermercado'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Editar transação'), findsOneWidget);
+      expect(find.text('Alimentação'), findsOneWidget);
+
+      await tester.tap(find.text('Alimentação'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Saúde').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Salvar alterações'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Supermercado'), findsOneWidget);
+      expect(find.textContaining('Saúde'), findsOneWidget);
+    },
+  );
 }

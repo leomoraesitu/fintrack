@@ -1,4 +1,7 @@
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
+import 'package:fintrack/features/transactions/domain/entities/transaction_categories.dart';
+import 'package:fintrack/features/transactions/domain/entities/transaction_category.dart';
+import 'package:fintrack/features/transactions/domain/entities/transaction_type.dart';
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_bloc.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_event.dart';
@@ -35,12 +38,20 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _categoryController = TextEditingController();
+  TransactionCategory? _selectedCategory;
 
   late TransactionType _selectedType;
   late DateTime _selectedDate;
 
   bool get isEditing => widget.transaction != null;
+
+  List<TransactionCategory> get _availableCategories {
+    if (_selectedType == TransactionType.income) {
+      return TransactionCategories.incomeCategories;
+    }
+
+    return TransactionCategories.expenseCategories;
+  }
 
   @override
   void initState() {
@@ -51,12 +62,13 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     if (t != null) {
       _amountController.text = t.amount.toStringAsFixed(2);
       _descriptionController.text = t.description;
-      _categoryController.text = t.category;
+      _selectedCategory = t.category;
       _selectedType = t.type;
       _selectedDate = t.date;
     } else {
       _selectedType = TransactionType.expense;
       _selectedDate = DateTime.now();
+      _selectedCategory = null;
     }
   }
 
@@ -64,7 +76,6 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
@@ -108,7 +119,7 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
       amount: amount,
       date: _selectedDate,
       description: _descriptionController.text.trim(),
-      category: _categoryController.text.trim(),
+      category: _selectedCategory!,
     );
 
     if (isEditing) {
@@ -198,6 +209,10 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                     onSelectionChanged: (selection) {
                       setState(() {
                         _selectedType = selection.first;
+
+                        if (_selectedCategory?.type != _selectedType) {
+                          _selectedCategory = null;
+                        }
                       });
                     },
                   ),
@@ -232,12 +247,23 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _categoryController,
+                  DropdownButtonFormField<TransactionCategory>(
+                    initialValue: _selectedCategory,
                     decoration: const InputDecoration(labelText: 'Categoria'),
+                    items: _availableCategories.map((category) {
+                      return DropdownMenuItem<TransactionCategory>(
+                        value: category,
+                        child: Text(category.label),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Informe a categoria.';
+                      if (value == null) {
+                        return 'Selecione a categoria.';
                       }
 
                       return null;

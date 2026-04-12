@@ -48,7 +48,7 @@ class TransactionListItem extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '${transaction.category} • ${transaction.date.day}/${transaction.date.month}/${transaction.date.year}',
+                '${transaction.category.label} • ${transaction.date.day}/${transaction.date.month}/${transaction.date.year}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

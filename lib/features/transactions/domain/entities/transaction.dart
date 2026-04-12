@@ -1,4 +1,5 @@
-enum TransactionType { income, expense }
+import 'package:fintrack/features/transactions/domain/entities/transaction_category.dart';
+import 'package:fintrack/features/transactions/domain/entities/transaction_type.dart';
 
 class Transaction {
   const Transaction({
@@ -15,7 +16,7 @@ class Transaction {
   final double amount;
   final DateTime date;
   final String description;
-  final String category;
+  final TransactionCategory category;
 
   bool get isIncome => type == TransactionType.income;
   bool get isExpense => type == TransactionType.expense;
