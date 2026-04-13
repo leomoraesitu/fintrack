@@ -1,6 +1,12 @@
+import 'package:fintrack/features/dashboard/data/repositories/transaction_dashboard_repository.dart';
+import 'package:fintrack/features/dashboard/domain/usecases/get_financial_summary.dart';
+import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:fintrack/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transactions_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ShellPage extends StatefulWidget {
   const ShellPage({super.key, this.onLogout});
@@ -19,7 +25,16 @@ class _ShellPageState extends State<ShellPage> {
         return const TransactionsPage();
       case 0:
       default:
-        return const _DashboardPlaceholder();
+        return BlocProvider(
+          create: (context) => DashboardBloc(
+            GetFinancialSummary(
+              TransactionDashboardRepository(
+                context.read<TransactionRepository>(),
+              ),
+            ),
+          ),
+          child: const DashboardPage(),
+        );
     }
   }
 
@@ -74,14 +89,5 @@ class _ShellPageState extends State<ShellPage> {
         ],
       ),
     );
-  }
-}
-
-class _DashboardPlaceholder extends StatelessWidget {
-  const _DashboardPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Resumo financeiro em construção'));
   }
 }

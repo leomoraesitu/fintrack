@@ -19,7 +19,10 @@ void main() {
       expect(find.text('FinTrack'), findsOneWidget);
       expect(find.text('Dashboard'), findsOneWidget);
       expect(find.text('Transações'), findsOneWidget);
-      expect(find.text('Resumo financeiro em construção'), findsOneWidget);
+      expect(find.text('Resumo financeiro'), findsOneWidget);
+      expect(find.text('Saldo atual'), findsOneWidget);
+      expect(find.text('Receitas'), findsOneWidget);
+      expect(find.text('Despesas'), findsOneWidget);
       expect(find.byIcon(Icons.add), findsOneWidget);
       expect(find.byIcon(Icons.logout), findsOneWidget);
 
