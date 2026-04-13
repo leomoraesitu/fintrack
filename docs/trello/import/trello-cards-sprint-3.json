@@ -1,0 +1,301 @@
+{
+  "name": "FinTrack",
+  "description": "Cards da Sprint 3 para importacao no Trello, focados em persistencia local, filtros, ordenacao, robustez e fechamento do MVP.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_scope_note",
+      "display": { "cardFront": false },
+      "name": "Escopo",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Card [SP:2]: Definir adaptador de persistencia local para transacoes",
+          "desc": "Objetivo: fechar a decisao tecnica do mecanismo local e preparar a camada de dados para persistir transacoes entre sessoes.\n\nCriterios de aceite:\n- O mecanismo de persistencia local do MVP esta definido.\n- Existe contrato claro entre repositorio e fonte local.\n- A decisao preserva a separacao entre dominio e dados.",
+          "idLabels": ["lab_sprint_3", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Escolher o mecanismo local compativel com o projeto",
+                "Definir contrato da fonte de dados local",
+                "Preparar a estrutura para substituir a implementacao em memoria"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Persistencia local e robustez" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Persistir CRUD de transacoes entre sessoes",
+          "desc": "Objetivo: substituir a persistencia apenas em memoria por armazenamento local do estado de transacoes.\n\nCriterios de aceite:\n- Transacoes criadas, editadas e excluidas permanecem entre sessoes.\n- O repositorio recupera os dados ao iniciar o app.\n- O fluxo atual do CRUD continua funcionando sem regressao funcional.",
+          "idLabels": ["lab_sprint_3", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Implementar fonte local para salvar e carregar transacoes",
+                "Adaptar repositorio para usar persistencia local",
+                "Garantir hidratacao do estado ao abrir o app"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Persistencia local e robustez" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Modelar estrutura de filtros e ordenacao da listagem",
+          "desc": "Objetivo: definir a estrutura de dominio e apresentacao que representa filtros por tipo, categoria, periodo e ordenacao basica.\n\nCriterios de aceite:\n- Existe modelo claro para filtros da listagem.\n- A ordenacao basica possui convencao explicita.\n- A estrutura suporta combinacoes simples sem alterar os dados originais.",
+          "idLabels": ["lab_sprint_3", "lab_area_transactions", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar modelo de filtros com tipo, categoria e periodo",
+                "Definir convencao de ordenacao basica da listagem",
+                "Preparar contratos para aplicacao dos filtros na fonte atual"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Filtros e ordenacao" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Implementar filtros por tipo, categoria e periodo",
+          "desc": "Objetivo: permitir filtragem funcional da lista de transacoes a partir do escopo do MVP.\n\nCriterios de aceite:\n- Lista pode ser filtrada por tipo.\n- Lista pode ser filtrada por categoria.\n- Lista pode ser filtrada por periodo.\n- Combinacoes simples funcionam de forma previsivel.",
+          "idLabels": ["lab_sprint_3", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Aplicar filtros ao conjunto de transacoes exibido",
+                "Tratar periodo invalido antes da consulta final",
+                "Garantir que os filtros nao alteram os dados originais"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Filtros e ordenacao" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Construir bottom sheet de filtros e acao de ordenacao",
+          "desc": "Objetivo: conectar a especificacao visual de filtros a uma interface funcional de aplicacao e limpeza de filtros.\n\nCriterios de aceite:\n- Usuario consegue abrir a interface de filtros a partir da listagem.\n- Bottom sheet permite aplicar e limpar filtros.\n- Existe acao de ordenacao basica coerente com a listagem do MVP.",
+          "idLabels": ["lab_sprint_3", "lab_area_transactions", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Criar bottom sheet com secoes de tipo, categoria e periodo",
+                "Adicionar botoes Limpar e Aplicar filtros",
+                "Adicionar controle de ordenacao basica na listagem"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Filtros e ordenacao" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Consolidar estados vazio, loading e erro nos fluxos restantes",
+          "desc": "Objetivo: fortalecer a robustez do app aplicando estados de interface consistentes nas telas que ainda precisam de refinamento.\n\nCriterios de aceite:\n- Fluxos relevantes tratam estado vazio de forma clara.\n- Loading e erro sao apresentados quando fizer sentido.\n- O comportamento visual segue a linguagem definida na documentacao de design.",
+          "idLabels": ["lab_sprint_3", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Mapear pontos restantes sem tratamento consistente de estados",
+                "Aplicar estados vazio, loading e erro nas telas relevantes",
+                "Revisar mensagens e CTAs de tentativa ou recuperacao"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Persistencia local e robustez" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:3]: Ampliar testes para persistencia, filtros e estados",
+          "desc": "Objetivo: proteger o fechamento do MVP com cobertura automatizada sobre os incrementos centrais da Sprint 3.\n\nCriterios de aceite:\n- Persistencia local possui validacao automatizada relevante.\n- Filtros e ordenacao possuem validacao automatizada relevante.\n- Cenários principais de vazio, erro ou loading sao cobertos quando aplicavel.",
+          "idLabels": ["lab_sprint_3", "lab_area_transactions", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Adicionar testes para hidratar e persistir transacoes",
+                "Adicionar testes para filtros e ordenacao da listagem",
+                "Adicionar validacao dos estados principais quando fizer sentido"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "3" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Qualidade tecnica" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        },
+        {
+          "name": "Card [SP:2]: Consolidar documentacao tecnica e de apresentacao do MVP",
+          "desc": "Objetivo: fechar a Sprint 3 com documentacao coerente para portfolio, manutencao e demonstracao do projeto.\n\nCriterios de aceite:\n- Documentacao reflete o estado final do MVP.\n- README e documentos principais apontam o fluxo implementado.\n- O material de apresentacao fica coerente com o produto entregue.",
+          "idLabels": ["lab_sprint_3", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Atualizar README e documentos centrais do MVP",
+                "Revisar backlog overview, escopo e documentacao tecnica se necessario",
+                "Conferir consistencia entre implementacao, board e documentacao de apresentacao"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            {
+              "value": { "number": "2" },
+              "idValue": null,
+              "idCustomField": "cf_story_points"
+            },
+            {
+              "value": { "text": "Documentacao e fechamento do MVP" },
+              "idValue": null,
+              "idCustomField": "cf_epic"
+            },
+            {
+              "value": { "text": "Sprint 3 fecha o MVP com persistencia local, filtros, robustez, testes e documentacao final." },
+              "idValue": null,
+              "idCustomField": "cf_scope_note"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
