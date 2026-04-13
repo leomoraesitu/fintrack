@@ -23,6 +23,12 @@ void main() {
       expect(find.text('Saldo atual'), findsOneWidget);
       expect(find.text('Receitas'), findsOneWidget);
       expect(find.text('Despesas'), findsOneWidget);
+      expect(find.text('Transações recentes'), findsOneWidget);
+      expect(find.text('Ver todas'), findsOneWidget);
+
+      expect(find.text('Transporte'), findsOneWidget);
+      expect(find.text('Supermercado'), findsOneWidget);
+      expect(find.text('Salário'), findsOneWidget);
       expect(find.byIcon(Icons.add), findsOneWidget);
       expect(find.byIcon(Icons.logout), findsOneWidget);
 
@@ -165,6 +171,27 @@ void main() {
 
       expect(find.text('Supermercado'), findsOneWidget);
       expect(find.textContaining('Saúde'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'deve abrir a aba de transações ao tocar em ver todas no dashboard',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const FinTrackApp());
+
+      await tester.tap(find.text('Entrar no modo demo'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Resumo financeiro'), findsOneWidget);
+      expect(find.text('Ver todas'), findsOneWidget);
+
+      await tester.tap(find.text('Ver todas'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Transações'), findsWidgets);
+      expect(find.text('Salário'), findsOneWidget);
+      expect(find.text('Supermercado'), findsOneWidget);
+      expect(find.text('Transporte'), findsOneWidget);
     },
   );
 }

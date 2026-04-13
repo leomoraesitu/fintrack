@@ -1,11 +1,14 @@
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_state.dart';
+import 'package:fintrack/features/transactions/presentation/widgets/transaction_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  final VoidCallback? onViewAllTransactions;
+
+  const DashboardPage({super.key, this.onViewAllTransactions});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -99,6 +102,31 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Text(
+                      'Transações recentes',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    TextButton(
+                      onPressed: widget.onViewAllTransactions,
+                      child: const Text('Ver todas'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (state.recentTransactions.isEmpty)
+                  const Text('Nenhuma transação recente')
+                else
+                  Column(
+                    children: [
+                      for (final transaction in state.recentTransactions) ...[
+                        TransactionListItem(transaction: transaction),
+                        const SizedBox(height: 12),
+                      ],
+                    ],
+                  ),
               ],
             ),
           );

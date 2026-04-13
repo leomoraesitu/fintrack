@@ -1,5 +1,6 @@
 import 'package:fintrack/features/dashboard/domain/entities/financial_summary.dart';
 import 'package:fintrack/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 
 class TransactionDashboardRepository implements DashboardRepository {
@@ -27,5 +28,16 @@ class TransactionDashboardRepository implements DashboardRepository {
       totalIncome: totalIncome,
       totalExpense: totalExpense,
     );
+  }
+
+  @override
+  List<Transaction> getRecentTransactions({int limit = 3}) {
+    final transactions = List<Transaction>.from(
+      _transactionRepository.getTransactions(),
+    );
+
+    transactions.sort((a, b) => b.date.compareTo(a.date));
+
+    return transactions.take(limit).toList();
   }
 }

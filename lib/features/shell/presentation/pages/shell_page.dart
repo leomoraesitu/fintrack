@@ -1,5 +1,6 @@
 import 'package:fintrack/features/dashboard/data/repositories/transaction_dashboard_repository.dart';
 import 'package:fintrack/features/dashboard/domain/usecases/get_financial_summary.dart';
+import 'package:fintrack/features/dashboard/domain/usecases/get_recent_transactions.dart';
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fintrack/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
@@ -26,14 +27,23 @@ class _ShellPageState extends State<ShellPage> {
       case 0:
       default:
         return BlocProvider(
-          create: (context) => DashboardBloc(
-            GetFinancialSummary(
-              TransactionDashboardRepository(
-                context.read<TransactionRepository>(),
-              ),
-            ),
+          create: (context) {
+            final dashboardRepository = TransactionDashboardRepository(
+              context.read<TransactionRepository>(),
+            );
+
+            return DashboardBloc(
+              GetFinancialSummary(dashboardRepository),
+              GetRecentTransactions(dashboardRepository),
+            );
+          },
+          child: DashboardPage(
+            onViewAllTransactions: () {
+              setState(() {
+                _currentIndex = 1;
+              });
+            },
           ),
-          child: const DashboardPage(),
         );
     }
   }
