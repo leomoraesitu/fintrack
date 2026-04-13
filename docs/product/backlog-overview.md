@@ -8,6 +8,13 @@ Registrar a estrutura do backlog do produto em alto nivel, preservando o detalha
 
 O detalhamento do board, com convencoes de cards, story points, labels e Definition of Done operacional, esta em [docs/trello/trello-implementation.md](../trello/trello-implementation.md).
 
+## Status atual do backlog
+
+- Sprint 0 concluida com shell inicial, tema base, navegacao principal e smoke tests
+- Sprint 1 concluida com autenticacao mock e fluxo principal de CRUD de transacoes
+- Sprint 2 concluida com categorias padrao, dashboard com resumo financeiro, transacoes recentes e cobertura de testes ampliada
+- Sprint 3 passa a concentrar filtros, refinamentos de estados e consolidacao final do MVP
+
 ## Macroetapas do backlog
 
 ### Sprint 0 - Fundacao
@@ -31,12 +38,16 @@ O detalhamento do board, com convencoes de cards, story points, labels e Definit
 - construir dashboard com resumo financeiro
 - conectar os fluxos principais do usuario
 
+Status: concluida
+
 ### Sprint 3 - Robustez e fechamento do MVP
 
 - adicionar filtros e ordenacao basica
 - fortalecer tratamento de erros, loading e estados vazios
 - ampliar testes automatizados
 - consolidar documentacao tecnica e de apresentacao
+
+Status: proxima etapa principal do backlog
 
 ## Regras de priorizacao
 

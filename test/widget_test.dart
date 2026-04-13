@@ -23,6 +23,11 @@ void main() {
       expect(find.text('Saldo atual'), findsOneWidget);
       expect(find.text('Receitas'), findsOneWidget);
       expect(find.text('Despesas'), findsOneWidget);
+
+      expect(find.text('R\$ 3399.50'), findsOneWidget);
+      expect(find.text('R\$ 3500.00'), findsOneWidget);
+      expect(find.text('R\$ 100.50'), findsOneWidget);
+      
       expect(find.text('Transações recentes'), findsOneWidget);
       expect(find.text('Ver todas'), findsOneWidget);
 

@@ -22,9 +22,9 @@ Para leitura de recrutadores e avaliadores técnicos, o repositório foi pensado
 
 ## Status
 
-Este projeto está em estágio inicial de desenvolvimento.
+Este projeto está em desenvolvimento ativo e já possui um MVP funcional parcial.
 
-No momento, o repositório contém o scaffold base do Flutter e a configuração inicial do projeto. A direção do produto já está definida, mas as funcionalidades financeiras ainda estão em implementação.
+Ao final da Sprint 2, o aplicativo já conta com autenticação mock, shell principal, dashboard com resumo financeiro e transações recentes, além do fluxo completo de transações com categorias padrão. A base documental continua sendo evoluída em paralelo à implementação.
 
 ## Visão do produto
 
@@ -36,12 +36,22 @@ A primeira versão está focada no essencial:
 - acompanhar o saldo atual
 - organizar gastos em um fluxo simples e intuitivo
 
-## Funcionalidades planejadas para o MVP
+## Funcionalidades implementadas no MVP atual
 
-- registro de transações de receita e despesa
-- visualização de saldo
-- organização básica de gastos
-- experiência mobile com foco em usabilidade, desenvolvida com Flutter
+- login mock com entrada em modo demo e logout
+- shell principal com navegação entre dashboard e transações
+- dashboard com saldo atual, totais de receitas e despesas
+- seção de transações recentes com CTA para abrir a listagem completa
+- cadastro de transações de receita e despesa
+- edição e exclusão de transações com confirmação
+- categorias padrão do MVP integradas ao formulário e à listagem
+- atualização dos agregados financeiros a partir das transações cadastradas
+
+## Próximas entregas do MVP
+
+- filtros de transações por categoria, tipo e período
+- refinamentos visuais da dashboard e estados de interface
+- expansão da cobertura de testes para novas iterações
 
 ## Preview funcional do MVP
 
@@ -52,9 +62,10 @@ flowchart LR
 	A[Login mock] --> B[Shell principal]
 	B --> C[Dashboard]
 	B --> D[Lista de transações]
+	C --> I[Transações recentes]
+	I --> D
 	D --> E[Criar transação]
 	D --> F[Editar transação]
-	D --> G[Filtros]
 	F --> H[Confirmação de exclusão]
 	C --> D
 ```
@@ -103,14 +114,15 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 
 ## Estado atual do repositório
 
-- projeto Flutter inicializado e versionado
+- aplicativo Flutter funcional com fluxo principal navegável
+- autenticação mock com sessão local em memória
+- dashboard com resumo financeiro calculado a partir das transações
+- listagem de transações com criação, edição, exclusão e categorias padrão
 - estrutura multiplataforma gerada para Android, iOS, Web, Windows, Linux e macOS
-- teste de widget padrão incluído como linha de base inicial para testes
-- configuração de lint habilitada com `flutter_lints`
+- testes de widget cobrindo fluxos principais de dashboard e transações
+- testes unitários cobrindo cálculo de resumo financeiro e transações recentes
 - protótipo visual do MVP documentado em [docs/design/](docs/design/)
 - documentação técnica e funcional estruturada para continuidade do projeto
-
-Neste momento, a lógica e a interface do aplicativo ainda estão na fase de scaffold.
 
 ## Stack técnica
 
@@ -118,7 +130,7 @@ Neste momento, a lógica e a interface do aplicativo ainda estão na fase de sca
 - Dart
 - Material Design
 - arquitetura em camadas orientada a features
-- BLoC e Cubit como estratégia planejada de gerenciamento de estado
+- `flutter_bloc` como estratégia de gerenciamento de estado
 - `flutter_test` para testes de widget
 - `flutter_lints` para qualidade de código
 

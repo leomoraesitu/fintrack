@@ -15,6 +15,25 @@ Definir o recorte minimo do FinTrack que entrega valor de produto, viabiliza dem
 - filtros por tipo, categoria e periodo
 - persistencia local
 
+## Status atual do escopo
+
+### Ja implementado ate o fim da Sprint 2
+
+- autenticacao mock para entrada no app
+- shell principal com navegacao entre dashboard e transacoes
+- dashboard com saldo, total de receitas e total de despesas
+- secao de transacoes recentes com CTA para abrir a listagem completa
+- CRUD de transacoes em memoria
+- categorias padrao para classificacao de lancamentos
+- cobertura de testes para fluxos principais, categorias e dashboard
+
+### Ainda pendente dentro do MVP
+
+- filtros por tipo, categoria e periodo
+- persistencia local entre sessoes
+- refinamentos de estados vazios, loading e tratamento de falhas em pontos restantes do app
+- consolidacao final da cobertura de testes para os incrementos restantes
+
 ### Escopo tecnico
 
 - arquitetura por camadas com separacao entre apresentacao, dominio e dados
@@ -31,6 +50,9 @@ Definir o recorte minimo do FinTrack que entrega valor de produto, viabiliza dem
 - o usuario pode visualizar o saldo consolidado e o resumo mensal
 - o usuario pode filtrar transacoes por periodo, tipo e categoria
 - o app persiste os dados localmente entre sessoes
+
+Observacao:
+os quatro primeiros requisitos ja estao implementados no estado atual do projeto. Os requisitos de filtros e persistencia local permanecem como proximos passos do MVP.
 
 ## Requisitos nao funcionais
 
@@ -57,6 +79,4 @@ Definir o recorte minimo do FinTrack que entrega valor de produto, viabiliza dem
 O MVP depende das seguintes definicoes antes de implementacoes mais amplas:
 
 - escolha do mecanismo de persistencia local
-- definicao da estrutura inicial de pastas
-- convencao de navegacao principal
-- convencao de tratamento de falhas e estados
+- convencao de tratamento de falhas e estados para os fluxos restantes
