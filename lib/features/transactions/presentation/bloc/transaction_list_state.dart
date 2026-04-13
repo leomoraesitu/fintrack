@@ -1,4 +1,5 @@
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
+import 'package:fintrack/features/transactions/domain/entities/transaction_list_query.dart';
 
 abstract class TransactionListState {
   const TransactionListState();
@@ -13,11 +14,19 @@ class TransactionListLoading extends TransactionListState {
 }
 
 class TransactionListEmpty extends TransactionListState {
-  const TransactionListEmpty();
+  const TransactionListEmpty({
+    this.query = const TransactionListQuery(),
+  });
+
+  final TransactionListQuery query;
 }
 
 class TransactionListSuccess extends TransactionListState {
-  final List<Transaction> transactions;
+  const TransactionListSuccess({
+    required this.transactions,
+    this.query = const TransactionListQuery(),
+  });
 
-  const TransactionListSuccess({required this.transactions});
+  final List<Transaction> transactions;
+  final TransactionListQuery query;
 }
