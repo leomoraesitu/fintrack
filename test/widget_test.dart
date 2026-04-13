@@ -53,9 +53,9 @@ void main() {
       expect(find.text('Transações recentes'), findsOneWidget);
       expect(find.text('Ver todas'), findsOneWidget);
 
-      expect(find.text('Transporte'), findsOneWidget);
+      expect(find.text('- R\$ 18.00'), findsOneWidget);
       expect(find.text('Supermercado'), findsOneWidget);
-      expect(find.text('Salário'), findsOneWidget);
+      expect(find.text('+ R\$ 3500.00'), findsOneWidget);
       expect(find.byIcon(Icons.add), findsOneWidget);
       expect(find.byIcon(Icons.logout), findsOneWidget);
 
@@ -76,11 +76,22 @@ void main() {
       await tester.tap(find.text('Salvar transação'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Salário'), findsOneWidget);
-      expect(find.text('Supermercado'), findsOneWidget);
-      expect(find.text('Transporte'), findsOneWidget);
+      await tester.tap(find.text('Transações'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Farmacia'), findsOneWidget);
-      expect(find.textContaining('Saúde'), findsOneWidget);
+      expect(find.textContaining('Saúde •'), findsOneWidget);
+
+      await tester.scrollUntilVisible(
+        find.text('+ R\$ 3500.00'),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+      expect(find.text('Supermercado'), findsOneWidget);
+      expect(find.text('- R\$ 18.00'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Sair'));
       await tester.pumpAndSettle();
@@ -138,8 +149,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Mercado do bairro'), findsNothing);
-    expect(find.text('Salário'), findsOneWidget);
-    expect(find.text('Transporte'), findsOneWidget);
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
   });
 
   testWidgets(
@@ -197,7 +208,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Supermercado'), findsOneWidget);
-      expect(find.textContaining('Saúde'), findsOneWidget);
+      expect(find.textContaining('Saúde •'), findsOneWidget);
     },
   );
 
@@ -216,9 +227,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Transações'), findsWidgets);
-      expect(find.text('Salário'), findsOneWidget);
+      expect(find.text('+ R\$ 3500.00'), findsOneWidget);
       expect(find.text('Supermercado'), findsOneWidget);
-      expect(find.text('Transporte'), findsOneWidget);
+      expect(find.text('- R\$ 18.00'), findsOneWidget);
     },
   );
 
@@ -247,8 +258,8 @@ void main() {
 
       expect(find.text('Consulta'), findsOneWidget);
 
-      final savedTransactions =
-          (await SharedPreferences.getInstance()).getString('transactions');
+      final savedTransactions = (await SharedPreferences.getInstance())
+          .getString('transactions');
 
       expect(savedTransactions, isNotNull);
 
@@ -269,7 +280,109 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Consulta'), findsOneWidget);
-      expect(find.textContaining('Saúde'), findsOneWidget);
+      expect(find.textContaining('Saúde •'), findsOneWidget);
     },
   );
+
+  testWidgets('deve filtrar a lista de transações por tipo', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(await _buildTestApp());
+
+    await tester.tap(find.text('Entrar no modo demo'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Transações'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+
+    await tester.tap(find.text('Receitas'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsNothing);
+    expect(find.text('- R\$ 18.00'), findsNothing);
+
+    await tester.tap(find.text('Despesas'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsNothing);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+
+    await tester.tap(find.text('Todas'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+  });
+
+  testWidgets(
+    'deve filtrar por categoria e limpar categoria incompatível ao trocar o tipo',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(await _buildTestApp());
+
+      await tester.tap(find.text('Entrar no modo demo'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Transações'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Alimentação'));
+      await tester.tap(find.text('Alimentação'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Supermercado'), findsOneWidget);
+      expect(find.text('+ R\$ 3500.00'), findsNothing);
+      expect(find.text('- R\$ 18.00'), findsNothing);
+
+      await tester.tap(find.text('Receitas'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+      expect(find.text('Supermercado'), findsNothing);
+      expect(find.text('- R\$ 18.00'), findsNothing);
+
+      expect(find.text('Todas as categorias'), findsOneWidget);
+    },
+  );
+
+  testWidgets('deve filtrar a lista por período', (WidgetTester tester) async {
+    await tester.pumpWidget(await _buildTestApp());
+
+    await tester.tap(find.text('Entrar no modo demo'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Transações'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+
+    await tester.tap(find.text('Últimos 7 dias'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsNothing);
+    expect(find.text('+ R\$ 3500.00'), findsNothing);
+
+    await tester.tap(find.text('Este mês'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+
+    await tester.tap(find.text('Todo o período'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+  });
 }
