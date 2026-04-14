@@ -385,4 +385,108 @@ void main() {
     expect(find.text('Supermercado'), findsOneWidget);
     expect(find.text('- R\$ 18.00'), findsOneWidget);
   });
+
+  testWidgets(
+    'deve abrir o bottom sheet de filtros e aplicar filtro por tipo',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(await _buildTestApp());
+
+      await tester.tap(find.text('Entrar no modo demo'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Transações'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+      expect(find.text('Supermercado'), findsOneWidget);
+      expect(find.text('- R\$ 18.00'), findsOneWidget);
+
+      await tester.tap(find.text('Filtros'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Aplicar filtros'), findsOneWidget);
+      expect(find.text('Tipo'), findsOneWidget);
+      expect(find.text('Categoria'), findsOneWidget);
+      expect(find.text('Período'), findsOneWidget);
+
+      await tester.tap(find.text('Receitas'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Aplicar filtros'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Aplicar filtros'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+      expect(find.text('Supermercado'), findsNothing);
+      expect(find.text('- R\$ 18.00'), findsNothing);
+    },
+  );
+
+  testWidgets('deve limpar os filtros no bottom sheet antes de aplicar', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(await _buildTestApp());
+
+    await tester.tap(find.text('Entrar no modo demo'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Transações'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Filtros'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Receitas'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Este mês'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Limpar'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Limpar'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Aplicar filtros'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Aplicar filtros'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('+ R\$ 3500.00'), findsOneWidget);
+    expect(find.text('Supermercado'), findsOneWidget);
+    expect(find.text('- R\$ 18.00'), findsOneWidget);
+  });
+
+  testWidgets('deve alterar a ordenação da lista para mais antigas primeiro', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(await _buildTestApp());
+
+    await tester.tap(find.text('Entrar no modo demo'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Transações'));
+    await tester.pumpAndSettle();
+
+    final transporteAntes = tester.getTopLeft(find.text('Transporte')).dy;
+    final salarioAntes = tester.getTopLeft(find.text('Salário')).dy;
+
+    expect(transporteAntes, lessThan(salarioAntes));
+
+    await tester.tap(find.text('Mais recentes'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Mais antigas').last);
+    await tester.pumpAndSettle();
+
+    final transporteDepois = tester.getTopLeft(find.text('Transporte')).dy;
+    final salarioDepois = tester.getTopLeft(find.text('Salário')).dy;
+
+    expect(salarioDepois, lessThan(transporteDepois));
+    expect(find.text('Mais antigas'), findsOneWidget);
+  });
 }

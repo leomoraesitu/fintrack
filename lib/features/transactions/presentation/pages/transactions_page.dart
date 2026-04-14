@@ -54,86 +54,51 @@ class _TransactionsViewState extends State<_TransactionsView> {
 
           return Column(
             children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
                   children: [
-                    ChoiceChip(
-                      label: const Text('Todas'),
-                      selected: _currentQuery.type == null,
-                      onSelected: (_) => _updateTypeFilter(null),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _openFiltersBottomSheet,
+                        icon: const Icon(Icons.filter_alt_outlined),
+                        label: const Text('Filtros'),
+                      ),
                     ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Receitas'),
-                      selected: _currentQuery.type == TransactionType.income,
-                      onSelected: (_) =>
-                          _updateTypeFilter(TransactionType.income),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Despesas'),
-                      selected: _currentQuery.type == TransactionType.expense,
-                      onSelected: (_) =>
-                          _updateTypeFilter(TransactionType.expense),
-                    ),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Row(
-                  children: [
-                    ChoiceChip(
-                      label: const Text('Todas as categorias'),
-                      selected: _currentQuery.categoryId == null,
-                      onSelected: (_) => _updateCategoryFilter(null),
-                    ),
-                    const SizedBox(width: 8),
-                    ..._availableCategories().map(
-                      (category) => Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(category.label),
-                          selected: _currentQuery.categoryId == category.id,
-                          onSelected: (_) => _updateCategoryFilter(category.id),
+                    const SizedBox(width: 12),
+                    PopupMenuButton<TransactionSortOrder>(
+                      tooltip: 'Ordenar',
+                      onSelected: _updateSortOrder,
+                      itemBuilder: (context) => const [
+                        PopupMenuItem(
+                          value: TransactionSortOrder.newestFirst,
+                          child: Text('Mais recentes'),
+                        ),
+                        PopupMenuItem(
+                          value: TransactionSortOrder.oldestFirst,
+                          child: Text('Mais antigas'),
+                        ),
+                      ],
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.swap_vert),
+                            const SizedBox(width: 8),
+                            Text(_currentSortLabel()),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Row(
-                  children: [
-                    ChoiceChip(
-                      label: const Text('Todo o período'),
-                      selected: _currentQuery.period == null,
-                      onSelected: (_) => _updatePeriodFilter(null),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Últimos 7 dias'),
-                      selected: _samePeriod(
-                        _currentQuery.period,
-                        _last7DaysPeriod(),
-                      ),
-                      onSelected: (_) =>
-                          _updatePeriodFilter(_last7DaysPeriod()),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Este mês'),
-                      selected: _samePeriod(
-                        _currentQuery.period,
-                        _currentMonthPeriod(),
-                      ),
-                      onSelected: (_) =>
-                          _updatePeriodFilter(_currentMonthPeriod()),
                     ),
                   ],
                 ),
@@ -185,6 +150,229 @@ class _TransactionsViewState extends State<_TransactionsView> {
         TransactionListRequested(query: _currentQuery),
       );
     }
+  }
+
+  Future<void> _openFiltersBottomSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) {
+        TransactionType? draftType = _currentQuery.type;
+        String? draftCategoryId = _currentQuery.categoryId;
+        TransactionPeriodFilter? draftPeriod = _currentQuery.period;
+
+        bool isCategoryCompatibleWithDraftType(
+          String? categoryId,
+          TransactionType? type,
+        ) {
+          if (categoryId == null || type == null) {
+            return true;
+          }
+
+          return TransactionCategories.all.any(
+            (category) => category.id == categoryId && category.type == type,
+          );
+        }
+
+        List<TransactionCategory> availableDraftCategories() {
+          if (draftType == TransactionType.income) {
+            return TransactionCategories.incomeCategories;
+          }
+
+          if (draftType == TransactionType.expense) {
+            return TransactionCategories.expenseCategories;
+          }
+
+          return TransactionCategories.all;
+        }
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Filtros',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Tipo',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: const Text('Todas'),
+                            selected: draftType == null,
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftType = null;
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: const Text('Receitas'),
+                            selected: draftType == TransactionType.income,
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftType = TransactionType.income;
+                                if (!isCategoryCompatibleWithDraftType(
+                                  draftCategoryId,
+                                  draftType,
+                                )) {
+                                  draftCategoryId = null;
+                                }
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: const Text('Despesas'),
+                            selected: draftType == TransactionType.expense,
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftType = TransactionType.expense;
+                                if (!isCategoryCompatibleWithDraftType(
+                                  draftCategoryId,
+                                  draftType,
+                                )) {
+                                  draftCategoryId = null;
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Categoria',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: const Text('Todas as categorias'),
+                            selected: draftCategoryId == null,
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftCategoryId = null;
+                              });
+                            },
+                          ),
+                          ...availableDraftCategories().map(
+                            (category) => ChoiceChip(
+                              label: Text(category.label),
+                              selected: draftCategoryId == category.id,
+                              onSelected: (_) {
+                                setModalState(() {
+                                  draftCategoryId = category.id;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Período',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: const Text('Todo o período'),
+                            selected: draftPeriod == null,
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftPeriod = null;
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: const Text('Últimos 7 dias'),
+                            selected: _samePeriod(
+                              draftPeriod,
+                              _last7DaysPeriod(),
+                            ),
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftPeriod = _last7DaysPeriod();
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: const Text('Este mês'),
+                            selected: _samePeriod(
+                              draftPeriod,
+                              _currentMonthPeriod(),
+                            ),
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftPeriod = _currentMonthPeriod();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                                            const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                setModalState(() {
+                                  draftType = null;
+                                  draftCategoryId = null;
+                                  draftPeriod = null;
+                                });
+                              },
+                              child: const Text('Limpar'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: () {
+                                _applyQuery(
+                                  TransactionListQuery(
+                                    type: draftType,
+                                    categoryId: draftCategoryId,
+                                    period: draftPeriod,
+                                    sortOrder: _currentQuery.sortOrder,
+                                  ),
+                                );
+
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Aplicar filtros'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _applyQuery(TransactionListQuery query) {
@@ -246,6 +434,26 @@ class _TransactionsViewState extends State<_TransactionsView> {
         sortOrder: _currentQuery.sortOrder,
       ),
     );
+  }
+
+  void _updateSortOrder(TransactionSortOrder sortOrder) {
+    _applyQuery(
+      TransactionListQuery(
+        type: _currentQuery.type,
+        categoryId: _currentQuery.categoryId,
+        period: _currentQuery.period,
+        sortOrder: sortOrder,
+      ),
+    );
+  }
+
+  String _currentSortLabel() {
+    switch (_currentQuery.sortOrder) {
+      case TransactionSortOrder.oldestFirst:
+        return 'Mais antigas';
+      case TransactionSortOrder.newestFirst:
+        return 'Mais recentes';
+    }
   }
 
   TransactionPeriodFilter _currentMonthPeriod() {
