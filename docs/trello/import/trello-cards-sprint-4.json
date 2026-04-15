@@ -1,0 +1,196 @@
+{
+  "name": "FinTrack",
+  "description": "Cards da Sprint 4 para importacao no Trello, focados em refinamento de layout, design system e boas práticas de engenharia.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "Sprint 4", "color": "red", "id": "lab_sprint_4" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_scope_note",
+      "display": { "cardFront": false },
+      "name": "Escopo",
+      "type": "text"
+    },
+    {
+      "id": "cf_fonte",
+      "display": { "cardFront": false },
+      "name": "Fonte",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Levantar gaps entre app e wireframes [SP:2]",
+          "desc": "Revisar todos os wireframes e identificar diferenças entre o app atual e o design previsto, listando telas e componentes que precisam de ajuste ou criação.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Revisar wireframes em screen-specs.md",
+                "Revisar docs/design/assets-inventory.md",
+                "Listar gaps de componentes, espaçamentos, cores, tipografia, ícones, estados"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "2" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        },
+        {
+          "name": "Definir tokens e componentes do Design System [SP:3]",
+          "desc": "Consolidar tokens de design (cores, tipografia, espaçamentos, bordas, ícones, elevações) e definir/documentar componentes padrões.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Consolidar paleta de cores, tipografia, espaçamentos, bordas, elevações",
+                "Definir componentes padrões: botões, inputs, cards, modais, listas, avatares, barras de navegação, feedbacks",
+                "Documentar tokens e componentes"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "3" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        },
+        {
+          "name": "Criar/ajustar componentes padrões [SP:5]",
+          "desc": "Implementar ou ajustar componentes reutilizáveis conforme o Design System definido.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Criar/ajustar botões, cards, inputs, modais, listas, avatares, barras de navegação, feedbacks",
+                "Garantir responsividade e adaptação para diferentes tamanhos de tela"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "5" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        },
+        {
+          "name": "Refatorar telas para usar o Design System [SP:5]",
+          "desc": "Refatorar telas existentes para utilizar os novos componentes e tokens do Design System, garantindo consistência visual e de comportamento.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Refatorar telas para usar componentes do Design System",
+                "Validar estados (loading, erro, vazio, sucesso) conforme wireframes"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "5" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        },
+        {
+          "name": "Validar visualmente e ajustar detalhes [SP:2]",
+          "desc": "Revisar visualmente cada tela comparando com os wireframes, realizar testes de usabilidade e responsividade, e ajustar detalhes finos.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Revisar visualmente cada tela",
+                "Realizar testes de usabilidade e responsividade",
+                "Ajustar detalhes finos (pixel perfect)"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "2" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        },
+        {
+          "name": "Documentar o Design System (README ou Storybook) [SP:2]",
+          "desc": "Documentar tokens, componentes e diretrizes de uso do Design System em README ou Storybook.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Documentar tokens de design",
+                "Documentar componentes padrões",
+                "Documentar diretrizes de uso"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "2" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        },
+        {
+          "name": "Garantir boas práticas de Clean Code e arquitetura [SP:3]",
+          "desc": "Aplicar boas práticas de Clean Code, organização por camadas, componentização, gerenciamento de estado, acessibilidade e responsividade.",
+          "idLabels": ["lab_sprint_4", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Ações",
+              "items": [
+                "Organizar projeto por camadas (UI, domínio, dados)",
+                "Componentizar widgets reutilizáveis",
+                "Usar BLoC/Cubit para lógica de negócio",
+                "Aplicar nomes claros e funções curtas",
+                "Evitar magic numbers e strings soltas",
+                "Documentar componentes e regras importantes",
+                "Separar temas e estilos",
+                "Usar testes automatizados",
+                "Garantir acessibilidade e responsividade"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "3" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Refinamento de Layout" }, "idCustomField": "cf_scope_note" },
+            { "value": { "text": "Sessão de Planejamento Sprint 4" }, "idCustomField": "cf_fonte" }
+          ]
+        }
+      ]
+    }
+  ]
+}
