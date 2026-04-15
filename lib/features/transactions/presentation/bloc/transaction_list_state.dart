@@ -14,9 +14,7 @@ class TransactionListLoading extends TransactionListState {
 }
 
 class TransactionListEmpty extends TransactionListState {
-  const TransactionListEmpty({
-    this.query = const TransactionListQuery(),
-  });
+  const TransactionListEmpty({this.query = const TransactionListQuery()});
 
   final TransactionListQuery query;
 }
@@ -28,5 +26,15 @@ class TransactionListSuccess extends TransactionListState {
   });
 
   final List<Transaction> transactions;
+  final TransactionListQuery query;
+}
+
+class TransactionListError extends TransactionListState {
+  const TransactionListError({
+    required this.message,
+    this.query = const TransactionListQuery(),
+  });
+
+  final String message;
   final TransactionListQuery query;
 }

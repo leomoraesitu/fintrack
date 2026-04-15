@@ -24,19 +24,27 @@ class TransactionListBloc
     Emitter<TransactionListState> emit,
   ) {
     emit(const TransactionListLoading());
+    try {
+      final transactions = _queryResolver.resolve(
+        _repository.getTransactions(),
+        query: event.query,
+      );
 
-    final transactions = _queryResolver.resolve(
-      _repository.getTransactions(),
-      query: event.query,
-    );
+      if (transactions.isEmpty) {
+        emit(TransactionListEmpty(query: event.query));
+        return;
+      }
 
-    if (transactions.isEmpty) {
-      emit(TransactionListEmpty(query: event.query));
-      return;
+      emit(
+        TransactionListSuccess(transactions: transactions, query: event.query),
+      );
+    } catch (e) {
+      emit(
+        TransactionListError(
+          message: 'Erro ao carregar transações',
+          query: event.query,
+        ),
+      );
     }
-
-    emit(
-      TransactionListSuccess(transactions: transactions, query: event.query),
-    );
   }
 }

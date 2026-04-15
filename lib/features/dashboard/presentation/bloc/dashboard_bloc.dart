@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/features/dashboard/domain/usecases/get_financial_summary.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  DashboardBloc(this._getFinancialSummary, this._getRecentTransactions) : super(DashboardInitial()) {
+  DashboardBloc(this._getFinancialSummary, this._getRecentTransactions)
+    : super(DashboardInitial()) {
     on<DashboardRequested>(_onDashboardRequested);
   }
 
@@ -18,18 +19,22 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   ) {
     emit(DashboardLoading());
 
-    final summary = _getFinancialSummary();
-    final recentTransactions = _getRecentTransactions();
+    try {
+      final summary = _getFinancialSummary();
+      final recentTransactions = _getRecentTransactions();
 
-    if (summary.totalIncome == 0 && summary.totalExpense == 0) {
-      emit(DashboardEmpty());
-      return;
+      if (summary.totalIncome == 0 && summary.totalExpense == 0) {
+        emit(DashboardEmpty());
+        return;
+      }
+      emit(
+        DashboardSuccess(
+          summary: summary,
+          recentTransactions: recentTransactions,
+        ),
+      );
+    } catch (error) {
+      emit(DashboardError(message: 'Não foi possível carregar o dashboard'));
     }
-    emit(
-      DashboardSuccess(
-        summary: summary,
-        recentTransactions: recentTransactions,
-      ),
-    );
   }
 }

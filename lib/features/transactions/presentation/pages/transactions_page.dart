@@ -1,18 +1,18 @@
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
-import 'package:fintrack/features/transactions/domain/entities/transaction_category.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
 import 'package:fintrack/features/transactions/presentation/widgets/transaction_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 
 import '../bloc/transaction_list_bloc.dart';
 import '../bloc/transaction_list_event.dart';
 import '../bloc/transaction_list_state.dart';
 
+import 'package:fintrack/features/transactions/domain/entities/transaction_category.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_list_query.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_type.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_categories.dart';
+import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 
 class TransactionsPage extends StatelessWidget {
   const TransactionsPage({super.key});
@@ -23,19 +23,19 @@ class TransactionsPage extends StatelessWidget {
       create: (context) =>
           TransactionListBloc(repository: context.read<TransactionRepository>())
             ..add(TransactionListRequested()),
-      child: const _TransactionsView(),
+      child: const TransactionsView(),
     );
   }
 }
 
-class _TransactionsView extends StatefulWidget {
-  const _TransactionsView();
+class TransactionsView extends StatefulWidget {
+  const TransactionsView({super.key});
 
   @override
-  State<_TransactionsView> createState() => _TransactionsViewState();
+  State<TransactionsView> createState() => _TransactionsViewState();
 }
 
-class _TransactionsViewState extends State<_TransactionsView> {
+class _TransactionsViewState extends State<TransactionsView> {
   TransactionListQuery _currentQuery = const TransactionListQuery();
 
   @override
@@ -47,10 +47,61 @@ class _TransactionsViewState extends State<_TransactionsView> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state is TransactionListEmpty || state is TransactionListSuccess) {
-          final transactions = state is TransactionListSuccess
-              ? state.transactions
-              : const <Transaction>[];
+        if (state is TransactionListError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () {
+                      context.read<TransactionListBloc>().add(
+                        TransactionListRequested(query: state.query),
+                      );
+                    },
+                    child: const Text('Tentar novamente'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (state is TransactionListEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.inbox_outlined, size: 48),
+                  SizedBox(height: 16),
+                  Text(
+                    'Nenhuma transação encontrada',
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Adicione uma transação ou ajuste os filtros para visualizar resultados.',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (state is TransactionListSuccess) {
+          final transactions = state.transactions;
 
           return Column(
             children: [
@@ -329,7 +380,7 @@ class _TransactionsViewState extends State<_TransactionsView> {
                           ),
                         ],
                       ),
-                                            const SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       Row(
                         children: [
                           Expanded(
@@ -385,57 +436,6 @@ class _TransactionsViewState extends State<_TransactionsView> {
     );
   }
 
-  bool _isCategoryCompatibleWithType(
-    String? categoryId,
-    TransactionType? type,
-  ) {
-    if (categoryId == null || type == null) {
-      return true;
-    }
-
-    return TransactionCategories.all.any(
-      (category) => category.id == categoryId && category.type == type,
-    );
-  }
-
-  void _updateTypeFilter(TransactionType? type) {
-    final nextCategoryId =
-        _isCategoryCompatibleWithType(_currentQuery.categoryId, type)
-        ? _currentQuery.categoryId
-        : null;
-
-    _applyQuery(
-      TransactionListQuery(
-        type: type,
-        categoryId: nextCategoryId,
-        period: _currentQuery.period,
-        sortOrder: _currentQuery.sortOrder,
-      ),
-    );
-  }
-
-  void _updateCategoryFilter(String? categoryId) {
-    _applyQuery(
-      TransactionListQuery(
-        type: _currentQuery.type,
-        categoryId: categoryId,
-        period: _currentQuery.period,
-        sortOrder: _currentQuery.sortOrder,
-      ),
-    );
-  }
-
-  void _updatePeriodFilter(TransactionPeriodFilter? period) {
-    _applyQuery(
-      TransactionListQuery(
-        type: _currentQuery.type,
-        categoryId: _currentQuery.categoryId,
-        period: period,
-        sortOrder: _currentQuery.sortOrder,
-      ),
-    );
-  }
-
   void _updateSortOrder(TransactionSortOrder sortOrder) {
     _applyQuery(
       TransactionListQuery(
@@ -488,17 +488,5 @@ class _TransactionsViewState extends State<_TransactionsView> {
 
     return first.startDate == second.startDate &&
         first.endDate == second.endDate;
-  }
-
-  List<TransactionCategory> _availableCategories() {
-    if (_currentQuery.type == TransactionType.income) {
-      return TransactionCategories.incomeCategories;
-    }
-
-    if (_currentQuery.type == TransactionType.expense) {
-      return TransactionCategories.expenseCategories;
-    }
-
-    return TransactionCategories.all;
   }
 }

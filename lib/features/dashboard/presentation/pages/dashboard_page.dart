@@ -30,8 +30,57 @@ class _DashboardPageState extends State<DashboardPage> {
         }
 
         if (state is DashboardEmpty) {
-          return const Center(
-            child: Text('Nenhuma transação para resumir ainda'),
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.inbox_outlined, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Nenhuma transação para resumir ainda',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Adicione uma transação para visualizar saldo, receitas e despesas.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (state is DashboardError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () {
+                      context.read<DashboardBloc>().add(
+                        const DashboardRequested(),
+                      );
+                    },
+                    child: const Text('Tentar novamente'),
+                  ),
+                ],
+              ),
+            ),
           );
         }
 

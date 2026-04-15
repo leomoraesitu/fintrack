@@ -9,6 +9,12 @@ class DashboardLoading extends DashboardState {}
 
 class DashboardEmpty extends DashboardState {}
 
+class DashboardError extends DashboardState {
+  DashboardError({required this.message});
+
+  final String message;
+}
+
 class DashboardSuccess extends DashboardState {
   DashboardSuccess({required this.summary, required this.recentTransactions});
 
