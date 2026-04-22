@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 
 class AuthDemoInfoBanner extends StatelessWidget {
   const AuthDemoInfoBanner({super.key});
@@ -11,28 +12,27 @@ class AuthDemoInfoBanner extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border.all(
-          color: colorScheme.onSurface.withValues(alpha: 0.1),
+          color: colorScheme.onSurface.withValues(alpha: 0.2),
+          width: AppBorders.widthThin,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppBorders.radiusXM),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline,
-            color: Color(0xFFFF9500),
-            size: 24,
+            color: colorScheme.tertiary,
+            size: AppSizes.iconSm,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              'Ambiente de demonstracao. Nenhuma credencial real e necessaria.',
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
+              'Ambiente de demonstracao. Nenhuma credencial real é necessaria.',
+              style: textTheme.bodySmall,
             ),
           ),
         ],

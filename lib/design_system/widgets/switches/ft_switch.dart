@@ -1,3 +1,4 @@
+import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,24 +26,13 @@ class FtSwitch extends StatelessWidget {
     final Widget switchWidget;
     switch (variant) {
       case FtSwitchVariant.android:
-        switchWidget = Switch(
-          value: value,
-          onChanged: onChanged,
-        );
+        switchWidget = Switch(value: value, onChanged: onChanged);
         break;
       case FtSwitchVariant.ios:
-        switchWidget = CupertinoSwitch(
-          value: value,
-          onChanged: onChanged,
-        );
+        switchWidget = CupertinoSwitch(value: value, onChanged: onChanged);
         break;
       case FtSwitchVariant.ios26:
-        switchWidget = CupertinoSwitch(
-          value: value,
-          onChanged: onChanged,
-          trackColor: Colors.black26,
-          activeColor: Colors.blueAccent,
-        );
+        switchWidget = CupertinoSwitch(value: value, onChanged: onChanged);
         break;
     }
     return Row(
@@ -50,11 +40,8 @@ class FtSwitch extends StatelessWidget {
       children: [
         switchWidget,
         if (label != null) ...[
-          const SizedBox(width: 12),
-          Text(
-            label!,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(label!, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ],
     );

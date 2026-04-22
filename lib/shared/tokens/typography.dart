@@ -66,21 +66,21 @@ class AppTypography {
   // Labels
   static TextStyle labelLarge(Brightness brightness) => TextStyle(
     fontSize: 15,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     height: 1.3,
     color: AppColors.primaryText(brightness),
     fontFamily: fontFamily,
   );
   static TextStyle labelMedium(Brightness brightness) => TextStyle(
     fontSize: 13,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     height: 1.3,
     color: AppColors.primaryText(brightness),
     fontFamily: fontFamily,
   );
   static TextStyle labelSmall(Brightness brightness) => TextStyle(
     fontSize: 11,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     height: 1.2,
     color: AppColors.primaryText(brightness),
     fontFamily: fontFamily,

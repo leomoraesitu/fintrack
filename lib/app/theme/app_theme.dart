@@ -1,84 +1,146 @@
 import 'package:flutter/material.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 
 class AppTheme {
   const AppTheme._();
 
-  static const Color _primary = Color(0xFF007AFF);
-  static const Color _background = Color(0xFFF2F2F7);
-  static const Color _surface = Color(0xFFFFFFFF);
-  static const Color _expense = Color(0xFFFF3B30);
-
   static ThemeData light() {
     final colorScheme = ColorScheme.light(
-      primary: _primary,
-      secondary: _primary,
-      surface: _surface,
-      error: _expense,
+      primary: AppColorsLight.primary,
+      onPrimary: AppColorsLight.onPrimary,
+      secondary: AppColorsLight.secondary,
+      onSecondary: AppColorsLight.onSecondary,
+      surface: AppColorsLight.surface,
+      onSurface: AppColorsLight.onSurface,
+      error: AppColorsLight.error,
+      onError: AppColorsLight.onError,
+      tertiary: AppColorsLight.accent,
     );
+    return _buildTheme(
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: AppColorsLight.background,
+      cardColor: AppColorsLight.surface,
+      appBarForegroundColor: AppColorsLight.primaryText,
+      navigationUnselectedColor: AppColorsLight.secondaryText,
+    );
+  }
+
+  static ThemeData dark() {
+    final colorScheme = ColorScheme.dark(
+      primary: AppColorsDark.primary,
+      onPrimary: AppColorsDark.onPrimary,
+      secondary: AppColorsDark.secondary,
+      onSecondary: AppColorsDark.onSecondary,
+      surface: AppColorsDark.surface,
+      onSurface: AppColorsDark.onSurface,
+      error: AppColorsDark.error,
+      onError: AppColorsDark.onError,
+      tertiary: AppColorsDark.accent,
+    );
+    return _buildTheme(
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: AppColorsDark.background,
+      cardColor: AppColorsDark.surface,
+      appBarForegroundColor: AppColorsDark.primaryText,
+      navigationUnselectedColor: AppColorsDark.secondaryText,
+    );
+  }
+
+  static ThemeData _buildTheme({
+    required ColorScheme colorScheme,
+    required Color scaffoldBackgroundColor,
+    required Color cardColor,
+    required Color appBarForegroundColor,
+    required Color navigationUnselectedColor,
+  }) {
+    final brightness = colorScheme.brightness;
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: _background,
+      scaffoldBackgroundColor: scaffoldBackgroundColor,
       cardTheme: CardThemeData(
-        color: _surface,
+        color: cardColor,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppBorders.radiusL),
+        ),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: _background,
-        foregroundColor: Colors.black87,
+        backgroundColor: scaffoldBackgroundColor,
+        foregroundColor: appBarForegroundColor,
         elevation: 0,
         centerTitle: false,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: _primary,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppBorders.radiusXL),
+        ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: _surface,
-        selectedItemColor: _primary,
-        unselectedItemColor: Colors.black54,
+        backgroundColor: cardColor,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: navigationUnselectedColor,
         type: BottomNavigationBarType.fixed,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: _surface,
+        fillColor: cardColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppBorders.radiusS),
           borderSide: BorderSide.none,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: _primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppBorders.radiusXM),
+          ),
         ),
       ),
-      textTheme : TextTheme(
-        headlineLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
-        headlineMedium: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          color: Colors.black87,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          color: Colors.black87,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          color: Colors.black54,
-        ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return colorScheme.onSurface.withValues(alpha: 0.38);
+          }
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.onPrimary;
+          }
+          return colorScheme.outline;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return colorScheme.onSurface.withValues(alpha: 0.12);
+          }
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          return colorScheme.surfaceContainerHighest;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return Colors.transparent;
+          }
+          return colorScheme.outline;
+        }),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+      ),
+
+      textTheme: TextTheme(
+        headlineLarge: AppTypography.headlineLarge(brightness),
+        headlineMedium: AppTypography.headlineMedium(brightness),
+        titleLarge: AppTypography.titleLarge(brightness),
+        titleMedium: AppTypography.titleMedium(brightness),
+        bodyLarge: AppTypography.bodyLarge(brightness),
+        bodyMedium: AppTypography.bodyMedium(brightness),
+        bodySmall: AppTypography.bodySmall(brightness),
+        labelLarge: AppTypography.labelLarge(brightness),
+        labelMedium: AppTypography.labelMedium(brightness),
+        labelSmall: AppTypography.labelSmall(brightness),
       ),
     );
   }

@@ -1,9 +1,12 @@
+import 'package:fintrack/design_system/widgets/widgets.dart';
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:fintrack/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:fintrack/features/transactions/presentation/widgets/transaction_list_item.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPage extends StatefulWidget {
   final VoidCallback? onViewAllTransactions;
@@ -23,148 +26,182 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    final currencyFormat = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+    );
+
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         if (state is DashboardInitial || state is DashboardLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const FtLoadingState();
         }
 
         if (state is DashboardEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.inbox_outlined, size: 48),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Nenhuma transação para resumir ainda',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Adicione uma transação para visualizar saldo, receitas e despesas.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
+          return const FtEmptyState(
+            title: 'Nenhuma transação para resumir ainda',
+            message:
+                'Adicione uma transação para visualizar saldo, receitas e despesas.',
           );
         }
 
         if (state is DashboardError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline, size: 48),
-                  const SizedBox(height: 16),
-                  Text(
-                    state.message,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: () {
-                      context.read<DashboardBloc>().add(
-                        const DashboardRequested(),
-                      );
-                    },
-                    child: const Text('Tentar novamente'),
-                  ),
-                ],
-              ),
-            ),
+          return FtErrorState(
+            message: state.message,
+            onRetry: () {
+              context.read<DashboardBloc>().add(const DashboardRequested());
+            },
           );
         }
 
         if (state is DashboardSuccess) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Resumo financeiro',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Saldo atual'),
-                        const SizedBox(height: 8),
-                        Text(
-                          'R\$ ${state.summary.balance.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                      ],
+                SizedBox(
+                  width: AppSizes.widthFull,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppBorders.radiusXL,
+                      ),
+                    ),
+                    color: Theme.of(context).colorScheme.primary,
+                    elevation: AppShadows.sm.first.blurRadius,
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'SALDO TOTAL',
+                                    style: textTheme.labelMedium?.copyWith(
+                                      color: colorScheme.surface,
+                                    ),
+                                  ),
+
+                                  Text(
+                                    currencyFormat.format(state.summary.balance),
+                                    style: textTheme.headlineLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.surface,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Container(
+                                width: AppSizes.controlLg,
+                                height: AppSizes.controlLg,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surface.withAlpha(40),
+                                  borderRadius: BorderRadius.circular(
+                                    AppBorders.radiusM,
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.account_balance_wallet,
+                                  size: AppSizes.iconLg,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(
+                            height: AppSizes.controlMd,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surface.withAlpha(40),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_month_outlined,
+                                size: AppSizes.iconSm,
+                                color: colorScheme.surface,
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Text(
+                                'Referente a\n${DateTime.now().month}/${DateTime.now().year}',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.surface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.trending_up_rounded,
+                                    size: 16,
+                                    color: colorScheme.surface,
+                                  ),
+                                  Text(
+                                    ' +2,4% este mês',
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.surface,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Icon(
+                                Icons.remove_red_eye,
+                                size: AppSizes.iconSm,
+                                color: colorScheme.surface,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 Row(
                   children: [
                     Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Receitas'),
-                              const SizedBox(height: 8),
-                              Text(
-                                'R\$ ${state.summary.totalIncome.toStringAsFixed(2)}',
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: FtStatCard(
+                        icon: Icons.trending_up_rounded,
+                        label: 'RECEITAS',
+                        value:
+                            '+ ${currencyFormat.format(state.summary.totalIncome)}',
+                        color: AppColors.success(Theme.of(context).brightness),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Despesas'),
-                              const SizedBox(height: 8),
-                              Text(
-                                'R\$ ${state.summary.totalExpense.toStringAsFixed(2)}',
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: FtStatCard(
+                        icon: Icons.trending_down_rounded,
+                        label: 'DESPESAS',
+                        value:
+                            '- ${currencyFormat.format(state.summary.totalExpense)}',
+                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Text(
-                      'Transações recentes',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    TextButton(
-                      onPressed: widget.onViewAllTransactions,
-                      child: const Text('Ver todas'),
-                    ),
-                  ],
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  'Transações recentes',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.xm),
                 if (state.recentTransactions.isEmpty)
                   const Text('Nenhuma transação recente')
                 else
@@ -172,7 +209,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     children: [
                       for (final transaction in state.recentTransactions) ...[
                         TransactionListItem(transaction: transaction),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.xm),
                       ],
                     ],
                   ),

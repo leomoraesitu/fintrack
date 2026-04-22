@@ -1,6 +1,9 @@
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
+import 'package:fintrack/features/transactions/presentation/mappers/transaction_category_icon_mapper.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
 import 'package:fintrack/features/transactions/presentation/widgets/transaction_list_item.dart';
+import 'package:fintrack/design_system/widgets/widgets.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,7 +18,9 @@ import 'package:fintrack/features/transactions/domain/entities/transaction_categ
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 
 class TransactionsPage extends StatelessWidget {
-  const TransactionsPage({super.key});
+  const TransactionsPage({super.key, this.refreshSignal});
+
+  final int? refreshSignal;
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +28,15 @@ class TransactionsPage extends StatelessWidget {
       create: (context) =>
           TransactionListBloc(repository: context.read<TransactionRepository>())
             ..add(TransactionListRequested()),
-      child: const TransactionsView(),
+      child: TransactionsView(refreshSignal: refreshSignal),
     );
   }
 }
 
 class TransactionsView extends StatefulWidget {
-  const TransactionsView({super.key});
+  const TransactionsView({super.key, this.refreshSignal});
+
+  final int? refreshSignal;
 
   @override
   State<TransactionsView> createState() => _TransactionsViewState();
@@ -39,64 +46,48 @@ class _TransactionsViewState extends State<TransactionsView> {
   TransactionListQuery _currentQuery = const TransactionListQuery();
 
   @override
+  void didUpdateWidget(covariant TransactionsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final oldSignal = oldWidget.refreshSignal ?? 0;
+    final newSignal = widget.refreshSignal ?? 0;
+    if (oldSignal == newSignal) {
+      return;
+    }
+
+    context.read<TransactionListBloc>().add(
+      TransactionListRequested(query: _currentQuery),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
     return BlocBuilder<TransactionListBloc, TransactionListState>(
       builder: (context, state) {
         if (state is TransactionListLoading ||
             state is TransactionListInitial) {
-          return const Center(child: CircularProgressIndicator());
+          return const FtLoadingState();
         }
 
         if (state is TransactionListError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline, size: 48),
-                  const SizedBox(height: 16),
-                  Text(
-                    state.message,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: () {
-                      context.read<TransactionListBloc>().add(
-                        TransactionListRequested(query: state.query),
-                      );
-                    },
-                    child: const Text('Tentar novamente'),
-                  ),
-                ],
-              ),
-            ),
+          return FtErrorState(
+            message: state.message,
+            onRetry: () {
+              context.read<TransactionListBloc>().add(
+                TransactionListRequested(query: state.query),
+              );
+            },
           );
         }
 
         if (state is TransactionListEmpty) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.inbox_outlined, size: 48),
-                  SizedBox(height: 16),
-                  Text(
-                    'Nenhuma transação encontrada',
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Adicione uma transação ou ajuste os filtros para visualizar resultados.',
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
+          return const FtEmptyState(
+            title: 'Nenhuma transação encontrada',
+            message:
+                'Adicione uma transação ou ajuste os filtros para visualizar resultados.',
           );
         }
 
@@ -106,17 +97,23 @@ class _TransactionsViewState extends State<TransactionsView> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                ),
                 child: Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton.icon(
+                      child: FtButton(
                         onPressed: _openFiltersBottomSheet,
-                        icon: const Icon(Icons.filter_alt_outlined),
-                        label: const Text('Filtros'),
+                        label: 'Filtros',
+                        icon: Icon(Icons.filter_alt_outlined),
+                        size: FtButtonSize.large,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppSpacing.xm),
                     PopupMenuButton<TransactionSortOrder>(
                       tooltip: 'Ordenar',
                       onSelected: _updateSortOrder,
@@ -131,22 +128,29 @@ class _TransactionsViewState extends State<TransactionsView> {
                         ),
                       ],
                       child: Container(
+                        height: AppSizes.buttonLg,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
+                          horizontal: AppSpacing.xm,
+                          vertical: AppSpacing.xm,
                         ),
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outline,
+                          color: colorScheme.primary,
+                          borderRadius: BorderRadius.circular(
+                            AppBorders.radiusS,
                           ),
-                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.swap_vert),
-                            const SizedBox(width: 8),
-                            Text(_currentSortLabel()),
+                            Icon(Icons.swap_vert, color: colorScheme.onPrimary),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              _currentSortLabel(),
+                              style: textTheme.labelLarge?.copyWith(
+                                color: colorScheme.onPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -156,15 +160,22 @@ class _TransactionsViewState extends State<TransactionsView> {
               ),
               Expanded(
                 child: transactions.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Nenhuma transação encontrada para os filtros selecionados',
-                        ),
+                    ? const FtEmptyState(
+                        title: 'Nenhuma transação encontrada',
+                        message:
+                            'Nenhuma transação encontrada para os filtros selecionados',
                       )
                     : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.md,
+                          AppSpacing.sm,
+                          AppSpacing.md,
+                          AppSpacing.md,
+                        ),
                         itemCount: transactions.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(
+                          height: AppSpacing.xm,
+                        ),
                         itemBuilder: (context, index) {
                           final transaction = transactions[index];
                           return TransactionListItem(
@@ -242,28 +253,36 @@ class _TransactionsViewState extends State<TransactionsView> {
           builder: (context, setModalState) {
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                  AppSpacing.md,
+                  AppSpacing.lg,
+                ),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Filtros',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        'Filtrar Transações',
+                        style: Theme.of(context).textTheme.titleLarge
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.md + AppSpacing.xs),
                       Text(
-                        'Tipo',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        'TIPO',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.xs),
                       Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
                         children: [
-                          ChoiceChip(
-                            label: const Text('Todas'),
+                          FtChoiceChip(
+                            icon: Icons.star,
+                            label: 'Todas',
                             selected: draftType == null,
                             onSelected: (_) {
                               setModalState(() {
@@ -271,8 +290,9 @@ class _TransactionsViewState extends State<TransactionsView> {
                               });
                             },
                           ),
-                          ChoiceChip(
-                            label: const Text('Receitas'),
+                          FtChoiceChip(
+                            icon: Icons.arrow_upward_rounded,
+                            label: 'Receitas',
                             selected: draftType == TransactionType.income,
                             onSelected: (_) {
                               setModalState(() {
@@ -286,8 +306,9 @@ class _TransactionsViewState extends State<TransactionsView> {
                               });
                             },
                           ),
-                          ChoiceChip(
-                            label: const Text('Despesas'),
+                          FtChoiceChip(
+                            icon: Icons.arrow_downward_rounded,
+                            label: 'Despesas',
                             selected: draftType == TransactionType.expense,
                             onSelected: (_) {
                               setModalState(() {
@@ -303,50 +324,21 @@ class _TransactionsViewState extends State<TransactionsView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.md + AppSpacing.xs),
                       Text(
-                        'Categoria',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        'PERÍODO',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.xs),
                       Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
                         children: [
-                          ChoiceChip(
-                            label: const Text('Todas as categorias'),
-                            selected: draftCategoryId == null,
-                            onSelected: (_) {
-                              setModalState(() {
-                                draftCategoryId = null;
-                              });
-                            },
-                          ),
-                          ...availableDraftCategories().map(
-                            (category) => ChoiceChip(
-                              label: Text(category.label),
-                              selected: draftCategoryId == category.id,
-                              onSelected: (_) {
-                                setModalState(() {
-                                  draftCategoryId = category.id;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Período',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          ChoiceChip(
-                            label: const Text('Todo o período'),
+                          FtChoiceChip(
+                            icon: Icons.star,
+                            label: 'Todo o período',
                             selected: draftPeriod == null,
                             onSelected: (_) {
                               setModalState(() {
@@ -354,8 +346,9 @@ class _TransactionsViewState extends State<TransactionsView> {
                               });
                             },
                           ),
-                          ChoiceChip(
-                            label: const Text('Últimos 7 dias'),
+                          FtChoiceChip(
+                            icon: Icons.star,
+                            label: 'Últimos 7 dias',
                             selected: _samePeriod(
                               draftPeriod,
                               _last7DaysPeriod(),
@@ -366,8 +359,9 @@ class _TransactionsViewState extends State<TransactionsView> {
                               });
                             },
                           ),
-                          ChoiceChip(
-                            label: const Text('Este mês'),
+                          FtChoiceChip(
+                            icon: Icons.star,
+                            label: 'Este mês',
                             selected: _samePeriod(
                               draftPeriod,
                               _currentMonthPeriod(),
@@ -380,11 +374,51 @@ class _TransactionsViewState extends State<TransactionsView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lmd),
+                      Text(
+                        'CATEGORIA',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: [
+                          FtChoiceChip(
+                            icon: Icons.star,
+                            label: 'Todas as categorias',
+                            selected: draftCategoryId == null,
+                            onSelected: (_) {
+                              setModalState(() {
+                                draftCategoryId = null;
+                              });
+                            },
+                          ),
+                          ...availableDraftCategories().map(
+                            (category) => FtChoiceChip(
+                              icon:TransactionCategoryIconMapper.fromCategory(category),
+                              label: category.label,
+                              selected: draftCategoryId == category.id,
+                              onSelected: (_) {
+                                setModalState(() {
+                                  draftCategoryId = category.id;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: AppSpacing.lg),
                       Row(
                         children: [
                           Expanded(
-                            child: OutlinedButton(
+                            child: FtButton(
+                              variant: FtButtonVariant.outline,
+                              label: 'Limpar',
+                              //variant: FtButtonVariant.outline,
                               onPressed: () {
                                 setModalState(() {
                                   draftType = null;
@@ -392,12 +426,12 @@ class _TransactionsViewState extends State<TransactionsView> {
                                   draftPeriod = null;
                                 });
                               },
-                              child: const Text('Limpar'),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AppSpacing.xm),
                           Expanded(
-                            child: FilledButton(
+                            child: FtButton(
+                              label: 'Aplicar filtros',
                               onPressed: () {
                                 _applyQuery(
                                   TransactionListQuery(
@@ -410,7 +444,6 @@ class _TransactionsViewState extends State<TransactionsView> {
 
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('Aplicar filtros'),
                             ),
                           ),
                         ],
@@ -457,7 +490,7 @@ class _TransactionsViewState extends State<TransactionsView> {
   }
 
   TransactionPeriodFilter _currentMonthPeriod() {
-    final now = DateTime(2026, 4, 13);
+    final now = DateTime.now();
 
     return TransactionPeriodFilter(
       startDate: DateTime(now.year, now.month, 1),
@@ -466,7 +499,7 @@ class _TransactionsViewState extends State<TransactionsView> {
   }
 
   TransactionPeriodFilter _last7DaysPeriod() {
-    final now = DateTime(2026, 4, 13);
+    final now = DateTime.now();
 
     return TransactionPeriodFilter(
       startDate: now.subtract(const Duration(days: 6)),

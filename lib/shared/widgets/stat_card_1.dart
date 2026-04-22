@@ -1,24 +1,8 @@
+import 'package:fintrack/design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widget_previews.dart';
 
-Widget previewMaterialApp(Widget child) {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Scaffold(
-      body: SafeArea(child: child),
-    ),
-  );
-}
-
-//@preview
+@Deprecated('Use FtStatCard from design_system/widgets/widgets.dart')
 class StatCard1 extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-  final double? width;
-  final double? height;
-
   const StatCard1({
     super.key,
     required this.icon,
@@ -29,57 +13,22 @@ class StatCard1 extends StatelessWidget {
     this.height,
   });
 
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+  final double? width;
+  final double? height;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width ?? 200,
-      height: height ?? 90,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ],
-      ),
+    return FtStatCard(
+      icon: icon,
+      label: label,
+      value: value,
+      color: color,
+      width: width,
+      height: height,
     );
   }
 }
-
-@Preview(
-  name: 'Stat Card 1',
-  wrapper: previewMaterialApp,
-)
-Widget statCard1Preview() => StatCard1(
-  icon: Icons.trending_up,
-  label: 'Receita',
-  value: 'R\$ 1.200',
-  color: Colors.greenAccent,
-);

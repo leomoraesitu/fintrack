@@ -20,7 +20,7 @@ class AppColorsLight {
   static const Color divider = Color(0xFFC6C6C8);
   static const Color hint = Color(0x3C3C434D);
   static const Color primaryText = Color(0xFF000000);
-  static const Color secondaryText = Color(0x3C3C4399);
+  static const Color secondaryText = Color(0x7C3C4399);
   static const Color success = Color(0xFF34C759);
   static const Color transparent = Color(0x00000000);
 }
@@ -38,9 +38,9 @@ class AppColorsDark {
   static const Color onError = Color(0xFFFFFFFF);
   static const Color accent = Color(0xFFFF9F0A);
   static const Color divider = Color(0xFF38383A);
-  static const Color hint = Color(0xEBEBF54D);
+  static const Color hint = Color(0xFFC6C6C8);
   static const Color primaryText = Color(0xFFFFFFFF);
-  static const Color secondaryText = Color(0xEBEBF599);
+  static const Color secondaryText = Color(0xFFC6C6C8);
   static const Color success = Color(0xFF30D158);
   static const Color transparent = Color(0x00000000);
 }

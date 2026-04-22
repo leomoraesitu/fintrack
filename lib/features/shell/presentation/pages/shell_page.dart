@@ -6,6 +6,7 @@ import 'package:fintrack/features/dashboard/presentation/pages/dashboard_page.da
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transactions_page.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,11 +20,12 @@ class ShellPage extends StatefulWidget {
 
 class _ShellPageState extends State<ShellPage> {
   int _currentIndex = 0;
+  int _transactionsRefreshSignal = 0;
 
   Widget _buildCurrentPage() {
     switch (_currentIndex) {
       case 1:
-        return const TransactionsPage();
+        return TransactionsPage(refreshSignal: _transactionsRefreshSignal);
       case 0:
       default:
         return BlocProvider(
@@ -56,15 +58,28 @@ class _ShellPageState extends State<ShellPage> {
     if (result == true) {
       setState(() {
         _currentIndex = 1;
+        _transactionsRefreshSignal++;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FinTrack'),
+        title: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Bom dia, 👋', style: textTheme.bodyLarge),
+              Text('FinTrack', style: textTheme.headlineMedium),
+            ],
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: widget.onLogout,
@@ -74,10 +89,15 @@ class _ShellPageState extends State<ShellPage> {
         ],
       ),
       body: _buildCurrentPage(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openTransactionFormPage,
-        tooltip: 'Nova transação',
-        child: const Icon(Icons.add),
+      floatingActionButton: SizedBox(
+        width: AppSizes.widthXs,
+        height: AppSizes.widthXs,
+        child: FloatingActionButton(
+          shape: CircleBorder(),
+          onPressed: _openTransactionFormPage,
+          tooltip: 'Nova transação',
+          child: const Icon(Icons.add, size: AppSizes.iconLg),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
@@ -89,12 +109,12 @@ class _ShellPageState extends State<ShellPage> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Dashboard',
+            icon: Icon(Icons.grid_view_rounded),
+            label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            label: 'Transações',
+            icon: Icon(Icons.swap_horiz_rounded),
+            label: 'Extrato',
           ),
         ],
       ),

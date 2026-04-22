@@ -12,6 +12,8 @@ lib/
     router/
     theme/
     bootstrap/
+  design_system/
+    widgets/
   core/
     error/
     utils/
@@ -38,6 +40,12 @@ lib/
       data/
   injection_container.dart
   main.dart
+
+test/
+  design_system/
+    widgets/
+      goldens/
+  features/
 ```
 
 ## Regras de organizacao

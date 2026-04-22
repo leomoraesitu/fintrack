@@ -1,21 +1,8 @@
+import 'package:fintrack/design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widget_previews.dart';
 
-Widget previewMaterialApp(Widget child) {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Scaffold(
-      body: SafeArea(child: child),
-    ),
-  );
-}
-
+@Deprecated('Use FtCategoryChip from design_system/widgets/widgets.dart')
 class CategoryChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final VoidCallback? onTap;
-
   const CategoryChip({
     super.key,
     required this.icon,
@@ -24,53 +11,18 @@ class CategoryChip extends StatelessWidget {
     this.onTap,
   });
 
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    final Color backgroundColor = selected
-        ? Theme.of(context).colorScheme.primary
-        : Colors.black;
-    final Color iconColor = Colors.white;
-    final Color textColor = Colors.white;
-    final FontWeight textWeight = selected ? FontWeight.bold : FontWeight.w600;
-
-    return GestureDetector(
+    return FtCategoryChip(
+      icon: icon,
+      label: label,
+      selected: selected,
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            if (!selected)
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: iconColor, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontWeight: textWeight,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
-
-@Preview(
-  name: 'Category Chip',
-  wrapper: previewMaterialApp,
-)
-Widget categoryChipPreview() => const CategoryChip(icon: Icons.category, label: 'Category');

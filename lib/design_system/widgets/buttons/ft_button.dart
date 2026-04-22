@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 
 /// Botão padrão do Design System FinTrack
 ///
@@ -31,48 +32,62 @@ class FtButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
     final bool isDisabled = disabled || loading;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final ButtonStyle style = _getButtonStyle(colorScheme);
+    final ButtonStyle style = _getButtonStyle(brightness);
 
     final Widget child = loading
         ? SizedBox(
-            width: 20,
-            height: 20,
+            width: AppSizes.loaderSm,
+            height: AppSizes.loaderSm,
             child: CircularProgressIndicator(
-              strokeWidth: 2,
+              strokeWidth: AppBorders.widthThick,
               valueColor: AlwaysStoppedAnimation<Color>(
-                _getContentColor(colorScheme),
+                _getContentColor(brightness),
               ),
             ),
           )
         : Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) ...[
                 icon!,
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
               ],
-              Flexible(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: _getContentColor(colorScheme),
-                    fontWeight: FontWeight.w600,
-                    fontSize: _getFontSize(),
+              if (fullWidth)
+                Expanded(
+                  child: Text(
+                    label,
+                    style: _getTextStyle(brightness).copyWith(
+                      color: _getContentColor(brightness),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
                   ),
+                )
+              else
+                Text(
+                  label,
+                  style: _getTextStyle(brightness).copyWith(
+                    color: _getContentColor(brightness),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
                 ),
-              ),
               if (iconEnd != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 iconEnd!,
               ],
             ],
           );
 
     return SizedBox(
-      width: fullWidth ? double.infinity : null,
+      width: fullWidth ? AppSizes.widthFull : null,
       height: _getHeight(),
       child: ElevatedButton(
         onPressed: isDisabled ? null : onPressed,
@@ -82,86 +97,91 @@ class FtButton extends StatelessWidget {
     );
   }
 
-  ButtonStyle _getButtonStyle(ColorScheme colorScheme) {
+
+  ButtonStyle _getButtonStyle(Brightness brightness) {
     switch (variant) {
       case FtButtonVariant.primary:
         return ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: AppColors.primary(brightness),
+          foregroundColor: AppColors.onPrimary(brightness),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppBorders.radiusS),
           ),
           elevation: 0,
         );
       case FtButtonVariant.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.secondary,
-          foregroundColor: colorScheme.onSecondary,
+          backgroundColor: AppColors.secondary(brightness),
+          foregroundColor: AppColors.onSecondary(brightness),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppBorders.radiusS),
           ),
           elevation: 0,
         );
       case FtButtonVariant.outline:
-        return OutlinedButton.styleFrom(
-          foregroundColor: colorScheme.primary,
-          side: BorderSide(color: colorScheme.primary, width: 2),
+        return OutlinedButton.styleFrom(          
+          backgroundColor: AppColors.surface(brightness),
+          side: BorderSide(
+            color: AppColors.divider(brightness),
+            width: AppBorders.widthHairline,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppBorders.radiusS),
           ),
         );
       case FtButtonVariant.ghost:
         return TextButton.styleFrom(
-          foregroundColor: colorScheme.primary,
+          foregroundColor: AppColors.primary(brightness),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppBorders.radiusS),
           ),
         );
       case FtButtonVariant.destructive:
         return ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.error(brightness),
+          foregroundColor: AppColors.onError(brightness),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppBorders.radiusS),
           ),
           elevation: 0,
         );
     }
   }
 
-  Color _getContentColor(ColorScheme colorScheme) {
+  Color _getContentColor(Brightness brightness) {
     switch (variant) {
       case FtButtonVariant.primary:
-        return colorScheme.onPrimary;
+        return AppColors.onPrimary(brightness);
       case FtButtonVariant.secondary:
-        return colorScheme.onSecondary;
+        return AppColors.onSecondary(brightness);
       case FtButtonVariant.outline:
+      return AppColors.onSurface(brightness);
       case FtButtonVariant.ghost:
-        return colorScheme.primary;
+        return AppColors.primary(brightness);
       case FtButtonVariant.destructive:
-        return Colors.white;
+        return AppColors.onError(brightness);
     }
   }
 
   double _getHeight() {
     switch (size) {
       case FtButtonSize.small:
-        return 36;
+        return AppSizes.buttonSm;
       case FtButtonSize.medium:
-        return 48;
+        return AppSizes.buttonMd;
       case FtButtonSize.large:
-        return 56;
+        return AppSizes.buttonLg;
     }
   }
 
-  double _getFontSize() {
+  TextStyle _getTextStyle(Brightness brightness) {
     switch (size) {
       case FtButtonSize.small:
-        return 14;
+        return AppTypography.labelSmall(brightness);
       case FtButtonSize.medium:
-        return 16;
+        return AppTypography.labelMedium(brightness);
       case FtButtonSize.large:
-        return 18;
+        return AppTypography.labelLarge(brightness);
     }
   }
 }

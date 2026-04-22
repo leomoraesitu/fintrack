@@ -65,6 +65,8 @@ class FinTrackApp extends StatelessWidget {
         child: MaterialApp(
           title: 'FinTrack',
           theme: AppTheme.light(),
+          darkTheme: AppTheme.dark(),
+          themeMode: ThemeMode.system,
           home: const _AppEntryPage(),
         ),
       ),

@@ -6,8 +6,13 @@ import 'package:fintrack/features/transactions/domain/repositories/transaction_r
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_bloc.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_event.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_state.dart';
+import 'package:fintrack/design_system/widgets/widgets.dart';
+import 'package:fintrack/features/transactions/presentation/mappers/transaction_category_icon_mapper.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:intl/intl.dart';
 
 class TransactionFormPage extends StatelessWidget {
   const TransactionFormPage({super.key, this.transaction});
@@ -59,8 +64,10 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
 
     final t = widget.transaction;
 
+    final currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: '');
+
     if (t != null) {
-      _amountController.text = t.amount.toStringAsFixed(2);
+      _amountController.text = currencyFormat.format(t.amount);
       _descriptionController.text = t.description;
       _selectedCategory = t.category;
       _selectedType = t.type;
@@ -136,6 +143,170 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     return '$day/$month/$year';
   }
 
+  /* Widget _buildDesignSystemStatesPreview() {
+    final brightness = MediaQuery.platformBrightnessOf(context);
+    final surfaceColor = AppColors.surface(brightness);
+    final dividerColor = AppColors.divider(brightness);
+    final errorColor = AppColors.error(brightness);
+    final disabledContainerColor = AppColors.onSurface(
+      brightness,
+    ).withValues(alpha: 0.12);
+    final disabledBorderColor = AppColors.onSurface(
+      brightness,
+    ).withValues(alpha: 0.32);
+    final disabledTextColor = AppColors.onSurface(
+      brightness,
+    ).withValues(alpha: 0.38);
+
+    return ExpansionTile(
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      title: Text(
+        'Estados DS (exemplos)',
+        style: AppTypography.titleMedium(brightness),
+      ),
+      children: [
+        const FtTextField(
+          label: 'Texto com helper',
+          hint: 'Digite um e-mail',
+          helper: 'Exemplo de helper em campo de texto.',
+          leadingIcon: Icon(Icons.email_outlined, size: AppSizes.iconSm),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const FtTextField(
+          label: 'Texto com erro',
+          hint: 'Campo inválido',
+          error: true,
+          helper: 'Borda e estado de erro ativos.',
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const FtTextField(
+          label: 'Texto desabilitado',
+          value: 'Valor somente leitura',
+          helper: 'Exemplo de estado desabilitado.',
+          enabled: false,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtDropdownField<String>(
+          label: 'Dropdown com helper',
+          value: 'alimentacao',
+          helperText: 'Exemplo de helper em dropdown.',
+          items: const [
+            DropdownMenuItem(value: 'alimentacao', child: Text('Alimentação')),
+            DropdownMenuItem(value: 'transporte', child: Text('Transporte')),
+          ],
+          onChanged: (_) {},
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtDropdownField<String>(
+          label: 'Dropdown com erro',
+          errorText: 'Selecione uma categoria válida.',
+          items: const [
+            DropdownMenuItem(value: 'moradia', child: Text('Moradia')),
+          ],
+          onChanged: (_) {},
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtDropdownField<String>(
+          label: 'Dropdown desabilitado',
+          value: 'saude',
+          helperText: 'Exemplo de estado desabilitado.',
+          enabled: false,
+          items: const [DropdownMenuItem(value: 'saude', child: Text('Saúde'))],
+          onChanged: (_) {},
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtDateField(
+          label: 'Data com helper',
+          valueText: _formatDate(_selectedDate),
+          helperText: 'Exemplo de helper em campo de data.',
+          onSelectDate: () {},
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtDateField(
+          label: 'Data com erro',
+          valueText: '--/--/----',
+          errorText: 'Informe uma data válida.',
+          onSelectDate: () {},
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtDateField(
+          label: 'Data desabilitada',
+          valueText: _formatDate(_selectedDate),
+          helperText: 'Exemplo de estado desabilitado.',
+          enabled: false,
+          onSelectDate: () {},
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtFormField(
+          label: 'Container FtFormField (direto)',
+          helperText: 'Helper aplicado pelo FtFormField.',
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              border: Border.all(
+                color: dividerColor,
+                width: AppBorders.widthMedium,
+              ),
+              borderRadius: BorderRadius.circular(AppBorders.radiusS),
+            ),
+            child: Text(
+              'Exemplo de child customizado.',
+              style: AppTypography.bodyMedium(brightness),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtFormField(
+          label: 'Container FtFormField com erro',
+          errorText: 'Erro demonstrativo do wrapper.',
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              border: Border.all(
+                color: errorColor,
+                width: AppBorders.widthMedium,
+              ),
+              borderRadius: BorderRadius.circular(AppBorders.radiusS),
+            ),
+            child: Text(
+              'Estado de erro no FtFormField.',
+              style: AppTypography.bodyMedium(brightness),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        FtFormField(
+          label: 'Container FtFormField desabilitado',
+          helperText: 'Estado desabilitado no wrapper.',
+          enabled: false,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: disabledContainerColor,
+              border: Border.all(
+                color: disabledBorderColor,
+                width: AppBorders.widthMedium,
+              ),
+              borderRadius: BorderRadius.circular(AppBorders.radiusS),
+            ),
+            child: Text(
+              'Child desabilitado.',
+              style: AppTypography.bodyMedium(
+                brightness,
+              ).copyWith(color: disabledTextColor),
+            ),
+          ),
+        ),
+      ],
+    );
+  } */
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<TransactionFormBloc, TransactionFormState>(
@@ -177,67 +348,134 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    isEditing
-                        ? 'Edite os dados da transação.'
-                        : 'Preencha os dados para adicionar uma transação.',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  Center(
+                    child: Text(
+                      isEditing ? 'Valor da transação' : 'Valor da transação',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ),
-                  const SizedBox(height: 24),
-                  Text('Tipo', style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(height: 8),
-                  SegmentedButton<TransactionType>(
-                    segments: const [
-                      ButtonSegment<TransactionType>(
-                        value: TransactionType.income,
-                        label: Text('Receita'),
-                        icon: Icon(Icons.arrow_downward),
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    spacing: AppSpacing.xs,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'R\$',
+                        style: Theme.of(context).textTheme.displaySmall,
                       ),
-                      ButtonSegment<TransactionType>(
-                        value: TransactionType.expense,
-                        label: Text('Despesa'),
-                        icon: Icon(Icons.arrow_upward),
+                      IntrinsicWidth(
+                        child: TextField(
+                          controller: _amountController,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(fontWeight: FontWeight.w500),
+                          decoration: const InputDecoration(
+                            hintText: '0,00',
+                            border: InputBorder.none,
+                            filled: false,
+                            isCollapsed: true,
+                          ),
+                          onChanged: (value) {
+                            final numbersOnly = value.replaceAll(
+                              RegExp(r'[^0-9]'),
+                              '',
+                            );
+
+                            if (numbersOnly.isEmpty) {
+                              _amountController.value = const TextEditingValue(
+                                text: '',
+                                selection: TextSelection.collapsed(offset: 0),
+                              );
+                              return;
+                            }
+
+                            final number = double.parse(numbersOnly) / 100;
+
+                            final formatted = number
+                                .toStringAsFixed(2)
+                                .replaceAll('.', ',')
+                                .replaceAllMapped(
+                                  RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+                                  (match) => '${match[1]}.',
+                                );
+
+                            _amountController.value = TextEditingValue(
+                              text: formatted,
+                              selection: TextSelection.collapsed(
+                                offset: formatted.length,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
-                    selected: {_selectedType},
-                    onSelectionChanged: (selection) {
-                      setState(() {
-                        _selectedType = selection.first;
-
-                        if (_selectedCategory?.type != _selectedType) {
-                          _selectedCategory = null;
-                        }
-                      });
-                    },
                   ),
-                  const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _amountController,
-                    decoration: const InputDecoration(
-                      labelText: 'Valor',
-                      hintText: '0,00',
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Informe o valor.';
-                      }
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('Tipo', style: Theme.of(context).textTheme.labelLarge),
+                  const SizedBox(height: AppSpacing.sm),
+                  Center(
+                    child: SizedBox(
+                      width: AppSizes.widthFull,
+                      child: SegmentedButton<TransactionType>(
+                        style: SegmentedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surface,
+                          selectedForegroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
+                          selectedBackgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          side: BorderSide(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.12),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppBorders.radiusXM,
+                            ),
+                          ),
+                        ),
+                        segments: const [
+                          ButtonSegment<TransactionType>(
+                            value: TransactionType.income,
+                            label: Text('Receita'),
+                            icon: Icon(Icons.arrow_downward),
+                          ),
+                          ButtonSegment<TransactionType>(
+                            value: TransactionType.expense,
+                            label: Text('Despesa'),
+                            icon: Icon(Icons.arrow_upward),
+                          ),
+                        ],
+                        selected: {_selectedType},
+                        onSelectionChanged: (selection) {
+                          setState(() {
+                            _selectedType = selection.first;
 
-                      return null;
-                    },
+                            if (_selectedCategory?.type != _selectedType) {
+                              _selectedCategory = null;
+                            }
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
+                  const SizedBox(height: AppSpacing.lg),
+
+                  const SizedBox(height: AppSpacing.md),
+                  FtTextField(
+                    label: 'Descrição',
                     controller: _descriptionController,
-                    decoration: const InputDecoration(labelText: 'Descricao'),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Informe a descricao.';
@@ -246,40 +484,54 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<TransactionCategory>(
-                    initialValue: _selectedCategory,
-                    decoration: const InputDecoration(labelText: 'Categoria'),
-                    items: _availableCategories.map((category) {
-                      return DropdownMenuItem<TransactionCategory>(
-                        value: category,
-                        child: Text(category.label),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategory = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
+                  const SizedBox(height: AppSpacing.md),
+                  FormField<TransactionCategory>(
+                    validator: (_) {
+                      if (_selectedCategory == null) {
                         return 'Selecione a categoria.';
                       }
 
                       return null;
                     },
+                    builder: (field) {
+                      return FtFormField(
+                        label: 'Categoria',
+                        requiredField: true,
+                        errorText: field.errorText,
+                        child: Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          children: _availableCategories
+                              .map(
+                                (category) => FtChoiceChip(
+                                  icon:
+                                      TransactionCategoryIconMapper.fromCategory(
+                                        category,
+                                      ),
+                                  label: category.label,
+                                  selected:
+                                      _selectedCategory?.id == category.id,
+                                  onSelected: (_) {
+                                    setState(() {
+                                      _selectedCategory = category;
+                                    });
+                                    field.didChange(category);
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Data'),
-                    subtitle: Text(_formatDate(_selectedDate)),
-                    trailing: TextButton(
-                      onPressed: _selectDate,
-                      child: const Text('Selecionar'),
-                    ),
+                  const SizedBox(height: AppSpacing.md),
+                  FtDateField(
+                    label: 'Data',
+                    valueText: _formatDate(_selectedDate),
+                    onSelectDate: _selectDate,
+                    requiredField: true,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.lg),
                   SizedBox(
                     width: double.infinity,
                     child:
@@ -288,25 +540,19 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                             final isSubmitting =
                                 state is TransactionFormSubmitting;
 
-                            return ElevatedButton(
+                            return FtButton(
+                              label: isEditing
+                                  ? 'Salvar alterações'
+                                  : 'Salvar transação',
                               onPressed: isSubmitting ? null : _submit,
-                              child: isSubmitting
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : Text(
-                                      isEditing
-                                          ? 'Salvar alterações'
-                                          : 'Salvar transação',
-                                    ),
+                              loading: isSubmitting,
+                              fullWidth: true,
                             );
                           },
                         ),
                   ),
+                  const SizedBox(height: AppSpacing.lg),
+                  //_buildDesignSystemStatesPreview(),
                 ],
               ),
             ),
@@ -323,23 +569,57 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Excluir transação'),
-          content: Text(
-            'Deseja excluir "${transaction.description}" '
-            'de R\$ ${transaction.amount.toStringAsFixed(2)}?',
+        final Brightness brightness = Theme.of(context).brightness;
+        return Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: AlertDialog(
+            icon: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: AppColors.error(brightness).withAlpha(80),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                Icon(
+                  Icons.delete_forever_rounded,
+                  color: AppColors.surface(brightness),
+                ),
+              ],
+            ),
+            title: Center(child: const Text('Excluir transação?')),
+            content: Text(
+              'Deseja excluir "${transaction.description}" '
+              'de R\$ ${transaction.amount.toStringAsFixed(2)}?',
+            ),
+            actions: [
+              Center(
+                child: SizedBox(
+                  width: AppSizes.widthFull,
+                  child: FtButton(
+                    label: 'Excluir',
+                    icon: Icon(Icons.delete_outline_rounded),
+                    variant: FtButtonVariant.destructive,
+                    onPressed: () => Navigator.of(context).pop(true),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Center(
+                child: SizedBox(
+                  width: AppSizes.widthFull,
+                  child: FtButton(
+                    label: 'Cancelar',
+                    variant: FtButtonVariant.outline,
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
+                ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Excluir'),
-            ),
-          ],
         );
       },
     );

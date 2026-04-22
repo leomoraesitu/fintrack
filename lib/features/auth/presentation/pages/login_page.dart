@@ -1,6 +1,7 @@
 import 'package:fintrack/features/auth/presentation/widgets/auth_branding_header.dart';
 import 'package:fintrack/features/auth/presentation/widgets/auth_demo_info_banner.dart';
 import 'package:fintrack/features/auth/presentation/widgets/auth_login_card.dart';
+import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -12,7 +13,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -22,11 +23,11 @@ class LoginPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       const AuthBrandingHeader(),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: AppSpacing.xl),
                       AuthLoginCard(onEnterDemo: onEnterDemo),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       const AuthDemoInfoBanner(),
                     ],
                   ),
