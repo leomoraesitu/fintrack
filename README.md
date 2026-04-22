@@ -1,9 +1,14 @@
+
 # <img src="docs/design/assets/branding/logo/icone-fintrack.png" alt="Ícone do FinTrack" width="28" /> FinTrack
+
+<p align="center">
+  <img src="docs/design/assets/branding/wordmark/logo-fintrack-light.png" alt="Wordmark do FinTrack" width="240" />
+</p>
 
 FinTrack é um aplicativo de finanças pessoais em Flutter, em desenvolvimento, com foco em ajudar usuários a acompanhar receitas, despesas e saldo em uma experiência mobile simples.
 
 <p align="center">
-  <img src="docs/design/assets/branding/wordmark/logo-fintrack-light.png" alt="Wordmark do FinTrack" width="240" />
+	<img src="docs/design/assets/demo/fintrack-v0.4.0-release.gif" alt="Demonstração do FinTrack" width="1280" />
 </p>
 
 ## Resumo executivo
@@ -22,9 +27,55 @@ Para leitura de recrutadores e avaliadores técnicos, o repositório foi pensado
 
 ## Status
 
-Este projeto está em desenvolvimento ativo e já possui um MVP funcional parcial.
+O projeto está em desenvolvimento ativo, com entregas incrementais validadas até a Sprint 4.
 
-Ao final da Sprint 2, o aplicativo já conta com autenticação mock, shell principal, dashboard com resumo financeiro e transações recentes, além do fluxo completo de transações com categorias padrão. A base documental continua sendo evoluída em paralelo à implementação.
+**Progresso até o momento:**
+- MVP funcional parcial: autenticação mock, shell principal, dashboard com resumo financeiro, transações recentes, cadastro/edição/exclusão de transações e categorias padrão.
+- Estrutura multiplataforma validada (Android, iOS, Web, Windows, Linux, macOS).
+- Cobertura de testes ampliada (widget/unitários).
+- Documentação técnica, visual e de produto evoluída em paralelo à implementação.
+
+**Em desenvolvimento:**
+- Filtros de transações por categoria, tipo e período.
+- Persistência local das transações com `shared_preferences` (ver ADR-003).
+- Refinamentos visuais e de estados de interface.
+
+## Histórico de entregas por Sprint
+
+### Sprint 0 (Fundação)
+- Substituição do app demo por uma shell inicial do FinTrack.
+- Definição da estrutura de pastas e tema base.
+- Preparação da navegação inicial e smoke tests.
+- Início dos padrões de organização do projeto.
+
+### Sprint 1 (Fluxo principal)
+- Implementação da autenticação mock.
+- Preparação da shell principal com navegação.
+- Modelagem da entidade de transação.
+- Criação da primeira listagem e formulário inicial.
+
+### Sprint 2 (Proposta de valor do produto)
+- Conclusão do CRUD de transações.
+- Inclusão de categorias padrão.
+- Construção do dashboard com resumo financeiro.
+- Conexão dos fluxos principais do usuário.
+
+### Sprint 3 (Fundação técnica e arquitetura)
+- Substituição da tela padrão do Flutter pela primeira experiência do FinTrack.
+- Estruturação inicial do projeto com separação clara de camadas (Presentation, Domain, Data).
+- Modelagem das entidades principais do domínio financeiro.
+- Implementação do fluxo de autenticação mock e navegação principal.
+- Criação dos primeiros testes de widget e unidade para fluxos críticos.
+- Documentação técnica inicial e primeiros ADRs.
+
+### Sprint 4 (Implementação orientada a clean code e evolução)
+- Implementação do cadastro, edição e exclusão de transações com categorias padrão.
+- Integração dos agregados financeiros (saldo, receitas, despesas) ao dashboard.
+- Refino do fluxo de navegação e estados de interface.
+- Expansão da cobertura de testes para os novos fluxos implementados.
+- Consolidação do handoff visual e atualização da documentação de design.
+- Padronização de código, revisão contínua e refatoração incremental.
+- Estrutura multiplataforma validada para Android, iOS, Web, Windows, Linux e macOS.
 
 ## Visão do produto
 
@@ -38,6 +89,7 @@ A primeira versão está focada no essencial:
 
 ## Funcionalidades implementadas no MVP atual
 
+### 100% implementado
 - login mock com entrada em modo demo e logout
 - shell principal com navegação entre dashboard e transações
 - dashboard com saldo atual, totais de receitas e despesas
@@ -47,9 +99,15 @@ A primeira versão está focada no essencial:
 - categorias padrão do MVP integradas ao formulário e à listagem
 - atualização dos agregados financeiros a partir das transações cadastradas
 
+### Em andamento
+- filtros de transações por categoria, tipo e período
+- persistência local das transações
+- refinamentos visuais e de estados de interface
+
 ## Próximas entregas do MVP
 
 - filtros de transações por categoria, tipo e período
+- persistência local das transações entre sessões (ADR-003)
 - refinamentos visuais da dashboard e estados de interface
 - expansão da cobertura de testes para novas iterações
 
@@ -131,6 +189,7 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 - Material Design
 - arquitetura em camadas orientada a features
 - `flutter_bloc` como estratégia de gerenciamento de estado
+- `shared_preferences` para persistência local (ver [ADR-003](docs/adr/adr-003-persistencia-local.md))
 - `flutter_test` para testes de widget
 - `flutter_lints` para qualidade de código
 
@@ -141,6 +200,8 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 - Flutter SDK instalado
 - Dart SDK disponível pelo Flutter
 - emulador, simulador, navegador ou dispositivo físico configurado
+
+> **Nota:** O app utiliza persistência local em memória ou via `shared_preferences`. Não há backend ou autenticação real no MVP.
 
 ### Executar Localmente
 
@@ -200,6 +261,12 @@ macos/     Target macOS
 - validar fluxos críticos da aplicação a cada nova entrega
 - evoluir a base do projeto com foco em manutenção, escalabilidade e consistência técnica
 
+### 6. Próximos passos do MVP
+
+- filtros de transações por categoria, tipo e período
+- persistência local das transações
+- refinamentos visuais e de estados de interface
+
 ## Documentação detalhada
 
 Para continuidade do projeto, a documentação complementar está centralizada na pasta [docs/](docs/).
@@ -216,7 +283,8 @@ Para continuidade do projeto, a documentação complementar está centralizada n
 - estratégia de testes em [docs/engineering/testing-strategy.md](docs/engineering/testing-strategy.md)
 - fluxo de desenvolvimento em [docs/engineering/development-workflow.md](docs/engineering/development-workflow.md)
 - documentação visual em [docs/design/README.md](docs/design/README.md)
-- decisões técnicas em [docs/adr/](docs/adr/)
+- handoff visual e mapeamento de frames em [docs/design/ff-designer-handoff.md](docs/design/ff-designer-handoff.md)
+- decisões técnicas centralizadas em [docs/adr/](docs/adr/)
 - especificações funcionais em [docs/features/](docs/features/)
 - evolução futura em [docs/future/](docs/future/)
 
@@ -230,8 +298,17 @@ O handoff de UX/UI do protótipo está organizado em [docs/design/](docs/design/
 - especificação de telas em [docs/design/screen-specs.md](docs/design/screen-specs.md)
 - inventário de assets em [docs/design/assets-inventory.md](docs/design/assets-inventory.md)
 
+## Release Notes
+
+Consulte o histórico consolidado de entregas e escopo da release mais recente em [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
 ## Por que este projeto
 
 Este repositório faz parte de um portfólio em Flutter e está sendo desenvolvido para demonstrar fundamentos de desenvolvimento mobile, visão de produto, capacidade de documentação técnica e maturidade de estruturação de um projeto antes mesmo da fase intensa de implementação.
 
-Mais do que um app de finanças em construção, o FinTrack funciona como evidência de processo: definição de escopo, organização do trabalho, consolidação de UX/UI, decisões arquiteturais e preparação para execução incremental de um MVP realista.
+Mais do que um app de finanças em construção, o FinTrack evidencia processo, arquitetura, documentação e evolução incremental. O projeto demonstra:
+- definição de escopo e organização do trabalho
+- consolidação de UX/UI e handoff visual
+- decisões arquiteturais registradas em ADRs
+- preparação para execução incremental de um MVP realista
+- clareza documental para facilitar onboarding, avaliação técnica e continuidade
