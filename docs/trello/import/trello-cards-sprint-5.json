@@ -1,0 +1,200 @@
+{
+  "name": "FinTrack",
+  "description": "Cards da Sprint 5 para importacao no Trello, focados em integracao backend, migracao de autenticacao/dados, sincronizacao multi-dispositivo e ajustes finais do MVP.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 0", "color": "green", "id": "lab_sprint_0" },
+    { "name": "Sprint 1", "color": "blue", "id": "lab_sprint_1" },
+    { "name": "Sprint 2", "color": "yellow", "id": "lab_sprint_2" },
+    { "name": "Sprint 3", "color": "orange", "id": "lab_sprint_3" },
+    { "name": "Sprint 4", "color": "red", "id": "lab_sprint_4" },
+    { "name": "Sprint 5", "color": "purple", "id": "lab_sprint_5" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "area:navigation", "color": "lime", "id": "lab_area_navigation" },
+    { "name": "area:transactions", "color": "pink", "id": "lab_area_transactions" },
+    { "name": "type:feature", "color": "blue", "id": "lab_type_feature" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_commit",
+      "display": { "cardFront": true },
+      "name": "Commit",
+      "type": "text"
+    },
+    {
+      "id": "cf_scope_note",
+      "display": { "cardFront": false },
+      "name": "Escopo",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Integrar backend Firebase ao app [SP:5]",
+          "desc": "Objetivo: integrar autenticação real e Firestore ao app, preparando para migração dos dados e autenticação.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Configurar Firebase no projeto",
+                "Implementar autenticação real",
+                "Integrar Firestore para CRUD de transações"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "5" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Integração Backend" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "8953a01" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Integração backend Firebase ao app" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Migrar autenticação e CRUD de transações para o backend [SP:5]",
+          "desc": "Objetivo: migrar autenticação mock e operações de transação para uso do backend, garantindo persistência e segurança.",
+          "idLabels": ["lab_sprint_5", "lab_area_auth", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Migrar autenticação para Firebase Auth",
+                "Migrar CRUD de transações para Firestore",
+                "Ajustar fluxos de login, cadastro, edição, exclusão e leitura"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "5" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Migração Backend" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "adbd699" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Migração de autenticação e CRUD para backend" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Implementar sincronização multi-dispositivo [SP:5]",
+          "desc": "Objetivo: garantir que dados do usuário sejam sincronizados entre dispositivos usando o backend.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_feature"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Implementar sincronização de dados no login",
+                "Testar uso simultâneo em múltiplos dispositivos",
+                "Tratar conflitos e concorrência básica"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "5" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Sincronização" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "7a90b32" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Sincronização multi-dispositivo" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Migrar dados locais para o backend [SP:3]",
+          "desc": "Objetivo: transferir dados persistidos localmente para o backend, garantindo continuidade e integridade.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Identificar dados locais a migrar",
+                "Implementar rotina de migração para Firestore",
+                "Validar integridade após migração"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "3" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Migração de Dados" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "f299396" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Migração de dados locais para backend" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Revisar e aplicar regras de segurança do Firestore [SP:2]",
+          "desc": "Objetivo: garantir que as regras de segurança do Firestore estejam corretas e protejam os dados dos usuários.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Revisar regras de segurança atuais",
+                "Ajustar regras conforme necessidades do app",
+                "Testar restrições e acessos"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "2" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Segurança" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "7a4fff7" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Regras de segurança Firestore" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Atualizar documentação técnica e de setup [SP:2]",
+          "desc": "Objetivo: garantir que toda a documentação técnica e de setup esteja atualizada após as mudanças da Sprint 5.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Atualizar README principal",
+                "Atualizar documentação de arquitetura e setup",
+                "Registrar mudanças relevantes da Sprint 5"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "2" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Documentação" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "5c47ad7" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Atualização de documentação técnica" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Preparar release público com APK e documentação [SP:2]",
+          "desc": "Objetivo: preparar o app para publicação, gerando APK final e documentação de release.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Gerar APK final para Android",
+                "Validar build multiplataforma",
+                "Documentar release e próximos passos"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "2" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Release" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "10ab7aa" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Preparação de release público" }, "idCustomField": "cf_scope_note" }
+          ]
+        }
+      ]
+    }
+  ]
+}

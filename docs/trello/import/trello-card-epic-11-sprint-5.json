@@ -1,0 +1,66 @@
+{
+  "name": "FinTrack",
+  "description": "Card Epic 11 da Sprint 5 para importação no Trello: validação dos fluxos de autenticação e transações com backend Firebase.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 5", "color": "purple", "id": "lab_sprint_5" },
+    { "name": "area:auth", "color": "purple", "id": "lab_area_auth" },
+    { "name": "type:test", "color": "red", "id": "lab_type_test" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_story_points",
+      "display": { "cardFront": true },
+      "name": "Story Points",
+      "type": "number"
+    },
+    {
+      "id": "cf_epic",
+      "display": { "cardFront": true },
+      "name": "Epic",
+      "type": "text"
+    },
+    {
+      "id": "cf_commit",
+      "display": { "cardFront": true },
+      "name": "Commit",
+      "type": "text"
+    },
+    {
+      "id": "cf_scope_note",
+      "display": { "cardFront": false },
+      "name": "Escopo",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Epic 11: Validar fluxos de login, cadastro, edição, exclusão e leitura com backend [SP:3]",
+          "desc": "Objetivo: garantir que todos os fluxos de autenticação e transações estejam funcionando corretamente com o backend Firebase, cobrindo login, cadastro, edição, exclusão e leitura de dados.",
+          "idLabels": ["lab_sprint_5", "lab_area_auth", "lab_type_test"],
+          "checklists": [
+            {
+              "name": "Checklist tecnico",
+              "items": [
+                "Testar fluxo de login com Firebase Auth",
+                "Testar cadastro de novo usuário",
+                "Testar edição de dados de usuário e transações",
+                "Testar exclusão de transações e contas",
+                "Testar leitura e sincronização de dados em múltiplos dispositivos"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "number": "3" }, "idCustomField": "cf_story_points" },
+            { "value": { "text": "Validação de Fluxos Backend" }, "idCustomField": "cf_epic" },
+            { "value": { "text": "8953a01" }, "idCustomField": "cf_commit" },
+            { "value": { "text": "Validação de fluxos com backend" }, "idCustomField": "cf_scope_note" }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -37,13 +37,34 @@ Responsabilidades:
 
 ### Data
 
-Responsavel por modelos, fontes de dados e implementacoes de repositorio.
+
+Responsável por modelos, fontes de dados e implementações de repositório.
 
 Responsabilidades:
 
-- ler e escrever dados locais
-- converter modelos de armazenamento para entidades de dominio
-- encapsular detalhes do mecanismo de persistencia
+- ler e escrever dados locais ou remotos (Firebase)
+- converter modelos de armazenamento para entidades de domínio
+- encapsular detalhes do mecanismo de persistência (ex: Firestore, Auth)
+
+### Integração com Firebase
+
+Com a adoção do Firebase ([ADR-006](../adr/adr-006-adocao-firebase.md)), a camada de dados passa a suportar:
+- Autenticação real de usuários (firebase_auth)
+- Persistência e sincronização de transações e categorias no Firestore
+- Listeners para atualização em tempo real
+- Regras de segurança para isolar dados por usuário
+
+O domínio permanece desacoplado do Firebase, acessando dados via contratos/repositórios.
+
+Fluxo simplificado:
+
+```mermaid
+flowchart LR
+	UI[Presentation] --> Domain[Domain]
+	Domain --> Data[Data: Local/Firebase]
+	Data -->|Auth| FirebaseAuth
+	Data -->|CRUD| Firestore
+```
 
 ## Fluxo de dependencia
 

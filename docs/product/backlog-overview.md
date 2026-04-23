@@ -10,10 +10,12 @@ O detalhamento do board, com convencoes de cards, story points, labels e Definit
 
 ## Status atual do backlog
 
-- Sprint 0 concluida com shell inicial, tema base, navegacao principal e smoke tests
-- Sprint 1 concluida com autenticacao mock e fluxo principal de CRUD de transacoes
-- Sprint 2 concluida com categorias padrao, dashboard com resumo financeiro, transacoes recentes e cobertura de testes ampliada
-- Sprint 3 passa a concentrar filtros, refinamentos de estados e consolidacao final do MVP
+- Sprint 0 concluída com shell inicial, tema base, navegação principal e smoke tests
+- Sprint 1 concluída com autenticação mock e fluxo principal de CRUD de transações
+- Sprint 2 concluída com categorias padrão, dashboard com resumo financeiro, transações recentes e cobertura de testes ampliada
+- Sprint 3 concluída com fundação técnica, arquitetura em camadas, primeiros testes e documentação inicial
+- Sprint 4 concluída com cadastro/edição/exclusão de transações, integração dos agregados financeiros ao dashboard, refino de navegação, expansão de testes, handoff visual consolidado e estrutura multiplataforma validada
+- Sprint 5 (em andamento): integração do backend Firebase, migração de autenticação e dados, sincronização multi-dispositivo, ajustes de segurança e documentação
 
 ## Macroetapas do backlog
 
@@ -40,14 +42,38 @@ O detalhamento do board, com convencoes de cards, story points, labels e Definit
 
 Status: concluida
 
-### Sprint 3 - Robustez e fechamento do MVP
 
-- adicionar filtros e ordenacao basica
+### Sprint 3 - Robustez e fechamento do MVP
+- adicionar filtros e ordenação básica
 - fortalecer tratamento de erros, loading e estados vazios
 - ampliar testes automatizados
-- consolidar documentacao tecnica e de apresentacao
+- consolidar documentação técnica e de apresentação
 
-Status: proxima etapa principal do backlog
+Status: concluída
+
+### Sprint 4 - Evolução e consolidação do MVP
+- implementar cadastro, edição e exclusão de transações com categorias padrão
+- integrar agregados financeiros (saldo, receitas, despesas) ao dashboard
+- refinar fluxo de navegação e estados de interface
+- expandir cobertura de testes para novos fluxos
+- consolidar handoff visual e atualizar documentação de design
+- padronizar código, revisão contínua e refatoração incremental
+- validar estrutura multiplataforma (Android, iOS, Web, Windows, Linux, macOS)
+
+Status: concluída
+
+### Sprint 5 - Integração do Backend e Sincronização
+- integrar backend Firebase ao app (autenticação real, Firestore)
+- migrar autenticação e CRUD de transações para o backend
+- implementar sincronização multi-dispositivo
+- migrar dados locais para o backend
+- revisar e aplicar regras de segurança do Firestore
+- atualizar documentação técnica e de setup
+- validar fluxos de login, cadastro, edição, exclusão e leitura com backend
+- corrigir bugs e inconsistências encontradas durante testes
+- preparar release público com APK e documentação
+
+Status: em andamento
 
 ## Regras de priorizacao
 

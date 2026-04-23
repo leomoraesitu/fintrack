@@ -38,6 +38,7 @@ O projeto está em desenvolvimento ativo, com entregas incrementais validadas at
 **Em desenvolvimento:**
 - Filtros de transações por categoria, tipo e período.
 - Persistência local das transações com `shared_preferences` (ver ADR-003).
+- Integração do backend Firebase para autenticação real e sincronização de dados ([ADR-006](docs/adr/adr-006-adocao-firebase.md)).
 - Refinamentos visuais e de estados de interface.
 
 ## Histórico de entregas por Sprint
@@ -190,6 +191,7 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 - arquitetura em camadas orientada a features
 - `flutter_bloc` como estratégia de gerenciamento de estado
 - `shared_preferences` para persistência local (ver [ADR-003](docs/adr/adr-003-persistencia-local.md))
+- `firebase_core`, `firebase_auth`, `cloud_firestore` para backend e autenticação (ver [ADR-006](docs/adr/adr-006-adocao-firebase.md))
 - `flutter_test` para testes de widget
 - `flutter_lints` para qualidade de código
 
@@ -265,6 +267,7 @@ macos/     Target macOS
 
 - filtros de transações por categoria, tipo e período
 - persistência local das transações
+- integração do backend Firebase (autenticação real, CRUD, sync)
 - refinamentos visuais e de estados de interface
 
 ## Documentação detalhada
