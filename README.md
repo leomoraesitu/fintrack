@@ -1,9 +1,8 @@
+# <img src="docs/design/assets/branding/logo/icone-fintrack.png" alt="Ícone do FinTrack" width="32" />  FinTrack
 
-# FinTrack
-
-![Ícone do FinTrack](docs/design/assets/branding/logo/icone-fintrack.png)
-
-![Wordmark do FinTrack](docs/design/assets/branding/wordmark/logo-fintrack-light.png)
+<p align="center">
+  <img src="docs/design/assets/branding/wordmark/logo-fintrack-light.png" alt="Wordmark do FinTrack" width="240" />
+</p>
 
 FinTrack é um aplicativo de finanças pessoais em Flutter, em desenvolvimento, com foco em ajudar usuários a acompanhar receitas, despesas e saldo em uma experiência mobile simples.
 
@@ -181,16 +180,16 @@ Os principais frames do protótipo já estão versionados no repositório e serv
 
 ### Galeria do protótipo
 
-| Login | Shell principal | Dashboard |
-| --- | --- | --- |
+| Login                                                               | Shell principal                                                           | Dashboard                                                   |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | ![Acesso inicial](docs/design/assets/frames/light/Login%20Mock.png) | ![Shell Principal](docs/design/assets/frames/light/Shell%20Principal.png) | ![Dashboard](docs/design/assets/frames/light/Dashboard.png) |
 
-| Lista de transações | Filtros | Criar transação |
-| --- | --- | --- |
+| Lista de transações                                                                           | Filtros                                                                                         | Criar transação                                                                     |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | ![Lista de Transações](docs/design/assets/frames/light/Lista%20de%20Transa%C3%A7%C3%B5es.png) | ![Filtros de Transação](docs/design/assets/frames/light/Filtros%20de%20Transa%C3%A7%C3%A3o.png) | ![Criar Transação](docs/design/assets/frames/light/Criar%20Transa%C3%A7%C3%A3o.png) |
 
-| Editar transação | Confirmação de exclusão | Estados de interface |
-| --- | --- | --- |
+| Editar transação                                                                      | Confirmação de exclusão                                                                                    | Estados de interface                                                                  |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | ![Editar Transação](docs/design/assets/frames/light/Editar%20Transa%C3%A7%C3%A3o.png) | ![Confirmação de Exclusão](docs/design/assets/frames/light/Confirma%C3%A7%C3%A3o%20de%20Exclus%C3%A3o.png) | ![Estados de Interface](docs/design/assets/frames/light/Estados%20de%20Interface.png) |
 
 O conjunto completo de referências visuais e suas correspondências funcionais está documentado em [docs/design/README.md](docs/design/README.md) e [docs/design/ff-designer-handoff.md](docs/design/ff-designer-handoff.md).
