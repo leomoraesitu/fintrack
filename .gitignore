@@ -53,6 +53,7 @@ app.*.map.json
 
 # Firebase
 google-services.json
+GoogleService-Info.plist
 .firebase/
 
 # Node/Firebase rules tests
