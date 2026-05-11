@@ -6,7 +6,7 @@ class GetFinancialSummary {
 
   final DashboardRepository _repository;
 
-  FinancialSummary call() {
+  Future<FinancialSummary> call() {
     return _repository.getFinancialSummary();
   }
 }

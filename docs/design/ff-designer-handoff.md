@@ -1,4 +1,4 @@
-# Handoff do FF Designer
+# Handoff visual do prototipo
 
 ## Objetivo
 
@@ -6,15 +6,21 @@ Registrar a origem do prototipo visual do FinTrack e mapear os frames exportados
 
 ## Fonte oficial do prototipo
 
-- link publico: https://share.ffdesigner.app/TJmmglOh9GCAtfNfXBOU
-- ferramenta: FlutterFlow Designer
+- link publico: <https://share.ffdesigner.app/TJmmglOh9GCAtfNfXBOU>
+- origem: prototipo visual previamente exportado e versionado no repositorio
 - variacoes exportadas: dark mode e light mode
+
+## Posicao atual do projeto
+
+- FlutterFlow nao faz parte do fluxo ativo de desenvolvimento do FinTrack.
+- Este documento existe para preservar a referencia visual dos artefatos ja exportados.
+- Implementacao e evolucao de UI devem partir do design system, dos assets versionados e do codigo do projeto.
 
 ## Escopo coberto pelo prototipo
 
 O prototipo cobre o fluxo principal do MVP definido na documentacao de produto:
 
-- autenticacao mock
+- acesso inicial de autenticacao
 - visualizacao de dashboard
 - visualizacao da shell principal com navegacao base
 - listagem de transacoes
@@ -28,7 +34,7 @@ O prototipo cobre o fluxo principal do MVP definido na documentacao de produto:
 
 | Frame | Feature relacionada | Documento funcional |
 | --- | --- | --- |
-| Login Mock | autenticacao | `docs/features/auth-mock.md` |
+| Login Mock | acesso inicial de autenticacao e modo demo | `docs/features/auth-mock.md` |
 | Shell Principal | navegacao principal | `docs/adr/adr-004-navegacao.md` |
 | Dashboard | dashboard | `docs/features/dashboard.md` |
 | Lista de Transacoes | transacoes | `docs/features/transactions.md` |
@@ -44,6 +50,7 @@ O prototipo cobre o fluxo principal do MVP definido na documentacao de produto:
 - a aparencia do prototipo nao altera regras de negocio ja definidas na documentacao funcional
 - light mode e dark mode devem ser tratados como variacoes do mesmo sistema visual
 - imagens de estados servem como referencia de feedback de interface e nao como fluxo independente
+- o link historico do prototipo nao deve ser tratado como dependencia operacional do projeto
 
 ## Decisoes visuais que ja podem orientar implementacao
 

@@ -29,6 +29,8 @@ Fluxo recomendado:
 - [Gerenciamento de estado](./engineering/state-management.md)
 - [Estrategia de testes](./engineering/testing-strategy.md)
 - [Fluxo de desenvolvimento](./engineering/development-workflow.md)
+- [Workflow do Codex](./engineering/codex-workflow.md)
+- [Setup do Firebase](./engineering/firebase-setup.md)
 
 ### Decisoes tecnicas
 
@@ -36,6 +38,7 @@ Fluxo recomendado:
 - [ADR-002 - Autenticacao mock](./adr/adr-002-autenticacao-mock.md)
 - [ADR-003 - Persistencia local](./adr/adr-003-persistencia-local.md)
 - [ADR-004 - Navegacao principal](./adr/adr-004-navegacao.md)
+- [ADR-006 - Adocao do Firebase](./adr/adr-006-adocao-firebase.md)
 
 ### Features
 
@@ -47,7 +50,7 @@ Fluxo recomendado:
 ### Design
 
 - [Visao geral de design](./design/README.md)
-- [Handoff do FF Designer](./design/ff-designer-handoff.md)
+- [Handoff visual do prototipo](./design/ff-designer-handoff.md)
 - [Design system](./design/design-system.md)
 - [Especificacao de telas](./design/screen-specs.md)
 - [Inventario de assets](./design/assets-inventory.md)

@@ -36,7 +36,7 @@ class AuthBrandingHeader extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.sm,),
+            SizedBox(height: AppSpacing.sm),
             Text('FinTrack', style: textTheme.headlineLarge),
             Text(
               'Controle suas finanças com clareza',
@@ -46,12 +46,5 @@ class AuthBrandingHeader extends StatelessWidget {
         ),
       ),
     );
-
-    /* Image.asset(
-      'assets/branding/logo/logo-fintrack-light.png',
-      width: double.infinity,
-      height: 144,
-      fit: BoxFit.contain,
-    ); */
   }
 }

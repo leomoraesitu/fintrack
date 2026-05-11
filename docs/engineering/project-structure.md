@@ -2,59 +2,66 @@
 
 ## Objetivo
 
-Documentar a organizacao planejada de pastas do projeto para manter consistencia conforme as features forem implementadas.
+Documentar a organizacao atual e a direcao de evolucao das pastas do projeto para manter consistencia conforme as features forem implementadas.
 
-## Estrutura alvo
+## Estrutura atual relevante
 
 ```text
 lib/
   app/
-    router/
+    app.dart
     theme/
-    bootstrap/
   design_system/
     widgets/
   core/
-    error/
     utils/
-    constants/
   shared/
-    widgets/
     extensions/
+    widgets/
   features/
     auth/
-      presentation/
-      domain/
       data/
+      domain/
+      presentation/
     dashboard/
-      presentation/
-      domain/
       data/
+      domain/
+      presentation/
+    shell/
+      presentation/
     transactions/
-      presentation/
-      domain/
       data/
-    categories/
-      presentation/
       domain/
-      data/
-  injection_container.dart
+      presentation/
   main.dart
+  firebase_options.dart
 
 test/
+  core/
+    utils/
   design_system/
     widgets/
       goldens/
   features/
+    auth/
+    dashboard/
+    transactions/
 ```
+
+## Direcao de evolucao
+
+- cada feature principal deve continuar preferindo `presentation/`, `domain/` e `data/` quando houver complexidade suficiente
+- features menores podem nascer apenas com a camada que realmente faz sentido no momento
+- novas subpastas devem surgir por necessidade real, nao por antecipacao
+- se `categories` voltar a existir como feature dedicada, deve seguir o mesmo padrao das demais
 
 ## Regras de organizacao
 
 - cada feature deve agrupar arquivos por responsabilidade e nao por tipo global do projeto
 - widgets compartilhados entre features devem sair da feature e ir para `shared/`
 - utilitarios genricos devem ir para `core/`
-- `main.dart` deve permanecer enxuto e delegar bootstrap do app
-- o arquivo de injecao nao deve concentrar regra de negocio
+- `main.dart` deve permanecer enxuto e delegar composicao da aplicacao
+- `lib/app/app.dart` concentra a composicao principal da aplicacao
 
 ## Convencoes de nomeacao
 

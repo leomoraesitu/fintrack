@@ -2,6 +2,6 @@ import 'package:fintrack/features/dashboard/domain/entities/financial_summary.da
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
 
 abstract class DashboardRepository {
-  FinancialSummary getFinancialSummary();
-  List<Transaction> getRecentTransactions({int limit = 3});
+  Future<FinancialSummary> getFinancialSummary();
+  Future<List<Transaction>> getRecentTransactions({int limit = 3});
 }

@@ -1,0 +1,116 @@
+{
+  "name": "FinTrack",
+  "description": "Cards de análise de issues técnicas detectadas por revisão automatizada.",
+  "defaultLists": false,
+  "labels": [
+    { "name": "Sprint 5", "color": "purple", "id": "lab_sprint_5" },
+    { "name": "area:foundation", "color": "sky", "id": "lab_area_foundation" },
+    { "name": "type:tech", "color": "black", "id": "lab_type_tech" },
+    { "name": "type:bug", "color": "red", "id": "lab_type_bug" }
+  ],
+  "customFields": [
+    {
+      "id": "cf_scope_note",
+      "display": { "cardFront": false },
+      "name": "Escopo",
+      "type": "text"
+    }
+  ],
+  "lists": [
+    {
+      "name": "Backlog",
+      "cards": [
+        {
+          "name": "Corrigir parsing de valores monetários com separador de milhar [High]",
+          "desc": "Em transaction_form_page.dart (linha 111), o form só troca ',' por '.', mas o formatter gera valores como 1.234,56, que vira 1.234.56 e falha no double.tryParse. Também afeta edição de valores como 3.500,00. Solução: remover '.' antes de trocar a vírgula decimal.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_bug"],
+          "checklists": [
+            {
+              "name": "Checklist técnico",
+              "items": [
+                "Remover separador de milhar (.) antes de trocar vírgula decimal",
+                "Testar parsing de valores como 1.234,56 e 3.500,00",
+                "Cobrir casos de edição e seed de valores"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "text": "Parsing monetário" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Persistência de transação não aguarda resultado [High]",
+          "desc": "Em local_transaction_repository.dart (linha 44), saveTransactions é chamado sem await, e métodos do repositório retornam void. A UI pode emitir sucesso e fechar antes da persistência terminar ou falhar. Solução: tornar mutações do repositório async e aguardar persistência no BLoC.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_bug"],
+          "checklists": [
+            {
+              "name": "Checklist técnico",
+              "items": [
+                "Tornar métodos de mutação do repositório async",
+                "Aguardar persistência no BLoC antes de emitir sucesso",
+                "Testar falhas de persistência e feedback ao usuário"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "text": "Persistência local" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Crash ao carregar JSON corrompido/antigo de transações [Medium]",
+          "desc": "main.dart (linha 20) carrega maps salvos e mapeia via transaction_storage_mapper.dart (linha 21), que faz casts e byName sem checagem. Um valor ruim crasha antes do runApp. Solução: adicionar parsing defensivo/migração ou capturar erro e cair para fallback.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_bug"],
+          "checklists": [
+            {
+              "name": "Checklist técnico",
+              "items": [
+                "Adicionar try/catch ao parsing de storage",
+                "Implementar fallback para dados inválidos",
+                "Testar migração de dados antigos/corrompidos"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "text": "Robustez de storage" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "UI de Auth e repositório Firebase desconectados [Medium]",
+          "desc": "auth_login_card.dart (linha 40) mostra campos de email/senha, firebase_auth_repository.dart (linha 21) existe, mas auth_form_bloc.dart (linha 1) está vazio e só faz login demo. Isso confunde se o MVP deve usar Firebase auth.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist técnico",
+              "items": [
+                "Integrar auth_form_bloc com firebase_auth_repository",
+                "Permitir login real via Firebase Auth",
+                "Remover/explicitar login demo se não for mais necessário"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "text": "Integração Auth" }, "idCustomField": "cf_scope_note" }
+          ]
+        },
+        {
+          "name": "Firebase crasha explicitamente no Linux [Low/Medium]",
+          "desc": "O repositório inclui linux/, mas firebase_options.dart (linha 24) lança UnsupportedError para Linux. Solução: remover/ignorar Linux como alvo ou configurar Firebase para Linux.",
+          "idLabels": ["lab_sprint_5", "lab_area_foundation", "lab_type_tech"],
+          "checklists": [
+            {
+              "name": "Checklist técnico",
+              "items": [
+                "Decidir se Linux será suportado",
+                "Ajustar firebase_options.dart para não crashar",
+                "Documentar suporte/plataformas"
+              ]
+            }
+          ],
+          "customFieldItems": [
+            { "value": { "text": "Compatibilidade Linux" }, "idCustomField": "cf_scope_note" }
+          ]
+        }
+      ]
+    }
+  ]
+}

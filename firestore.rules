@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/transactions/{transactionId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidTransaction();
+    }
+
+    match /users/{userId}/categories/{categoryId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidCategory();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function isValidTransaction() {
+      return request.resource.data.keys().hasOnly([
+          'type',
+          'amount',
+          'date',
+          'description',
+          'categoryId',
+          'categoryLabel',
+          'categoryType',
+          'updatedAt',
+        ])
+        && request.resource.data.type in ['income', 'expense']
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.date is timestamp
+        && request.resource.data.description is string
+        && request.resource.data.description.size() > 0
+        && request.resource.data.categoryId is string
+        && request.resource.data.categoryId.size() > 0
+        && request.resource.data.categoryLabel is string
+        && request.resource.data.categoryLabel.size() > 0
+        && request.resource.data.categoryType == request.resource.data.type
+        && request.resource.data.updatedAt == request.time;
+    }
+
+    function isValidCategory() {
+      return request.resource.data.keys().hasOnly(['label', 'type'])
+        && request.resource.data.label is string
+        && request.resource.data.label.size() > 0
+        && request.resource.data.type in ['income', 'expense'];
+    }
+  }
+}

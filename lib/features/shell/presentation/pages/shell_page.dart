@@ -10,6 +10,9 @@ import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:fintrack/features/auth/presentation/bloc/auth_session_bloc.dart';
+import 'package:fintrack/features/auth/presentation/bloc/auth_session_state.dart';
+
 class ShellPage extends StatefulWidget {
   const ShellPage({super.key, this.onLogout});
   final VoidCallback? onLogout;
@@ -51,8 +54,15 @@ class _ShellPageState extends State<ShellPage> {
   }
 
   Future<void> _openTransactionFormPage() async {
+    final transactionRepository = context.read<TransactionRepository>();
+
     final result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => const TransactionFormPage()),
+      MaterialPageRoute(
+        builder: (_) => RepositoryProvider<TransactionRepository>.value(
+          value: transactionRepository,
+          child: const TransactionFormPage(),
+        ),
+      ),
     );
 
     if (result == true) {
@@ -68,6 +78,12 @@ class _ShellPageState extends State<ShellPage> {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
+    final displayName = context.select<AuthSessionBloc, String?>((bloc) {
+      final state = bloc.state;
+
+      return state is AuthSessionAuthenticated ? state.displayName : null;
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Padding(
@@ -75,7 +91,11 @@ class _ShellPageState extends State<ShellPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Bom dia, 👋', style: textTheme.bodyLarge),
+              SizedBox(height: AppSpacing.sm),
+              Text(
+                displayName == null ? 'Olá, 👋' : 'Olá, $displayName 👋',
+                style: textTheme.bodyMedium,
+              ),
               Text('FinTrack', style: textTheme.headlineMedium),
             ],
           ),

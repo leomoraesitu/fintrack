@@ -1,8 +1,10 @@
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
-import 'package:fintrack/features/transactions/domain/entities/transaction_categories.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_category.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_type.dart';
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
+import 'package:fintrack/features/transactions/data/repositories/local_transaction_category_repository.dart';
+import 'package:fintrack/features/transactions/presentation/cubit/transaction_category_catalog_cubit.dart';
+import 'package:fintrack/features/transactions/presentation/cubit/transaction_category_catalog_state.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_bloc.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_event.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_state.dart';
@@ -12,7 +14,7 @@ import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:intl/intl.dart';
+import 'package:fintrack/core/utils/currency_parser.dart';
 
 class TransactionFormPage extends StatelessWidget {
   const TransactionFormPage({super.key, this.transaction});
@@ -21,12 +23,33 @@ class TransactionFormPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasCategoryCatalogCubit = _hasCategoryCatalogCubit(context);
+
     return BlocProvider(
       create: (context) => TransactionFormBloc(
         repository: context.read<TransactionRepository>(),
       ),
-      child: _TransactionFormView(transaction: transaction),
+      child: hasCategoryCatalogCubit
+          ? _TransactionFormView(transaction: transaction)
+          : BlocProvider(
+              create: (_) =>
+                  TransactionCategoryCatalogCubit(
+                    repository: const LocalTransactionCategoryRepository(),
+                    canManage: false,
+                  )
+                    ..load(),
+              child: _TransactionFormView(transaction: transaction),
+            ),
     );
+  }
+
+  bool _hasCategoryCatalogCubit(BuildContext context) {
+    try {
+      context.read<TransactionCategoryCatalogCubit>();
+      return true;
+    } on ProviderNotFoundException {
+      return false;
+    }
   }
 }
 
@@ -44,19 +67,19 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   TransactionCategory? _selectedCategory;
+  Transaction? _loadedTransaction;
+  _TransactionFormDraft? _localDraftSnapshot;
+  Transaction? _conflictBaseTransaction;
+  Transaction? _conflictRemoteTransaction;
 
   late TransactionType _selectedType;
   late DateTime _selectedDate;
+  String? _conflictMessage;
+  List<_TransactionConflictHighlight> _conflictHighlights = const [];
+  bool _isReloadingConflict = false;
+  bool _conflictRequiresClose = false;
 
   bool get isEditing => widget.transaction != null;
-
-  List<TransactionCategory> get _availableCategories {
-    if (_selectedType == TransactionType.income) {
-      return TransactionCategories.incomeCategories;
-    }
-
-    return TransactionCategories.expenseCategories;
-  }
 
   @override
   void initState() {
@@ -64,14 +87,8 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
 
     final t = widget.transaction;
 
-    final currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: '');
-
     if (t != null) {
-      _amountController.text = currencyFormat.format(t.amount);
-      _descriptionController.text = t.description;
-      _selectedCategory = t.category;
-      _selectedType = t.type;
-      _selectedDate = t.date;
+      _applyTransaction(t);
     } else {
       _selectedType = TransactionType.expense;
       _selectedDate = DateTime.now();
@@ -103,13 +120,360 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     });
   }
 
+  void _applyTransaction(Transaction transaction) {
+    _loadedTransaction = transaction;
+    _amountController.text = CurrencyParser.format(transaction.amount);
+    _descriptionController.text = transaction.description;
+    _selectedCategory = transaction.category;
+    _selectedType = transaction.type;
+    _selectedDate = transaction.date;
+  }
+
+  _TransactionFormDraft _captureDraft() {
+    return _TransactionFormDraft(
+      type: _selectedType,
+      amount: CurrencyParser.parse(_amountController.text) ?? 0,
+      description: _descriptionController.text.trim(),
+      category: _selectedCategory,
+      date: _selectedDate,
+    );
+  }
+
+  void _applyDraft(_TransactionFormDraft draft) {
+    _amountController.text = CurrencyParser.format(draft.amount);
+    _descriptionController.text = draft.description;
+    _selectedCategory = draft.category;
+    _selectedType = draft.type;
+    _selectedDate = draft.date;
+  }
+
+  Future<void> _reloadLatestTransaction() async {
+    final transactionId = _loadedTransaction?.id ?? widget.transaction?.id;
+    if (transactionId == null) {
+      return;
+    }
+
+    final previousTransaction = _loadedTransaction ?? widget.transaction;
+
+    setState(() {
+      _isReloadingConflict = true;
+    });
+
+    try {
+      final transactions = await context.read<TransactionRepository>().getTransactions();
+      final latestTransaction = transactions
+          .where((transaction) => transaction.id == transactionId)
+          .firstOrNull;
+
+      if (!mounted) {
+        return;
+      }
+
+      if (latestTransaction == null) {
+        setState(() {
+          _conflictMessage =
+              'A transação não está mais disponível no backend. Feche esta tela e atualize a lista.';
+          _conflictHighlights = const [];
+          _conflictRemoteTransaction = null;
+          _isReloadingConflict = false;
+          _conflictRequiresClose = true;
+        });
+        return;
+      }
+
+      setState(() {
+        _conflictBaseTransaction = previousTransaction;
+        _conflictRemoteTransaction = latestTransaction;
+        _conflictHighlights = _buildRemoteConflictHighlights(
+          previousTransaction,
+          latestTransaction,
+        );
+        _applyTransaction(latestTransaction);
+        _conflictMessage =
+            'Versão mais recente carregada. Revise os dados antes de salvar novamente.';
+        _isReloadingConflict = false;
+        _conflictRequiresClose = false;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _conflictMessage =
+            'Não foi possível recarregar a transação agora. Tente novamente.';
+        _conflictHighlights = const [];
+        _conflictRemoteTransaction = null;
+        _isReloadingConflict = false;
+        _conflictRequiresClose = false;
+      });
+    }
+  }
+
+  Future<void> _showCreateCategoryDialog(FormFieldState<TransactionCategory> field) async {
+    final controller = TextEditingController();
+    final categoryCatalogCubit = context.read<TransactionCategoryCatalogCubit>();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    final createdCategory = await showDialog<TransactionCategory>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            _selectedType == TransactionType.income
+                ? 'Nova categoria de receita'
+                : 'Nova categoria de despesa',
+          ),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Nome da categoria',
+              hintText: 'Ex: Viagem',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                final label = controller.text.trim();
+                if (label.isEmpty) {
+                  return;
+                }
+
+                final navigator = Navigator.of(context);
+
+                try {
+                  final category = await categoryCatalogCubit.addCategory(
+                    label: label,
+                    type: _selectedType,
+                  );
+
+                  if (!context.mounted) {
+                    return;
+                  }
+
+                  navigator.pop(category);
+                } catch (_) {
+                  if (!context.mounted) {
+                    return;
+                  }
+
+                  scaffoldMessenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Nao foi possivel salvar a categoria agora.'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Salvar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted || createdCategory == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedCategory = createdCategory;
+    });
+    field.didChange(createdCategory);
+  }
+
+  List<_TransactionConflictHighlight> _buildRemoteConflictHighlights(
+    Transaction? previousTransaction,
+    Transaction latestTransaction,
+  ) {
+    if (previousTransaction == null) {
+      return const [];
+    }
+
+    final highlights = <_TransactionConflictHighlight>[];
+
+    if (previousTransaction.description != latestTransaction.description) {
+      highlights.add(
+        _TransactionConflictHighlight(
+          label: 'Descrição',
+          value: latestTransaction.description,
+          source: _TransactionConflictHighlightSource.remote,
+        ),
+      );
+    }
+
+    if (previousTransaction.amount != latestTransaction.amount) {
+      highlights.add(
+        _TransactionConflictHighlight(
+          label: 'Valor',
+          value: CurrencyParser.format(latestTransaction.amount),
+          source: _TransactionConflictHighlightSource.remote,
+        ),
+      );
+    }
+
+    if (previousTransaction.category.id != latestTransaction.category.id) {
+      highlights.add(
+        _TransactionConflictHighlight(
+          label: 'Categoria',
+          value: latestTransaction.category.label,
+          source: _TransactionConflictHighlightSource.remote,
+        ),
+      );
+    }
+
+    if (previousTransaction.type != latestTransaction.type) {
+      highlights.add(
+        _TransactionConflictHighlight(
+          label: 'Tipo',
+          value: _labelForType(latestTransaction.type),
+          source: _TransactionConflictHighlightSource.remote,
+        ),
+      );
+    }
+
+    if (!_isSameDay(previousTransaction.date, latestTransaction.date)) {
+      highlights.add(
+        _TransactionConflictHighlight(
+          label: 'Data',
+          value: _formatDate(latestTransaction.date),
+          source: _TransactionConflictHighlightSource.remote,
+        ),
+      );
+    }
+
+    return highlights;
+  }
+
+  List<_TransactionConflictHighlight> _buildResolvedConflictHighlights({
+    required Transaction? previousTransaction,
+    required Transaction remoteTransaction,
+    required _TransactionFormDraft localDraft,
+  }) {
+    final highlights = <_TransactionConflictHighlight>[];
+
+    void addHighlight({
+      required String label,
+      required bool remoteChanged,
+      required bool localChanged,
+      required String remoteValue,
+      required String localValue,
+    }) {
+      if (!remoteChanged && !localChanged) {
+        return;
+      }
+
+      highlights.add(
+        _TransactionConflictHighlight(
+          label: label,
+          value: localChanged ? localValue : remoteValue,
+          source: localChanged
+              ? _TransactionConflictHighlightSource.local
+              : _TransactionConflictHighlightSource.remote,
+        ),
+      );
+    }
+
+    addHighlight(
+      label: 'Descrição',
+      remoteChanged: previousTransaction?.description != remoteTransaction.description,
+      localChanged: localDraft.description != remoteTransaction.description,
+      remoteValue: remoteTransaction.description,
+      localValue: localDraft.description,
+    );
+    addHighlight(
+      label: 'Valor',
+      remoteChanged: previousTransaction?.amount != remoteTransaction.amount,
+      localChanged: localDraft.amount != remoteTransaction.amount,
+      remoteValue: CurrencyParser.format(remoteTransaction.amount),
+      localValue: CurrencyParser.format(localDraft.amount),
+    );
+    addHighlight(
+      label: 'Categoria',
+      remoteChanged: previousTransaction?.category.id != remoteTransaction.category.id,
+      localChanged: localDraft.category?.id != remoteTransaction.category.id,
+      remoteValue: remoteTransaction.category.label,
+      localValue: localDraft.category?.label ?? 'Sem categoria',
+    );
+    addHighlight(
+      label: 'Tipo',
+      remoteChanged: previousTransaction?.type != remoteTransaction.type,
+      localChanged: localDraft.type != remoteTransaction.type,
+      remoteValue: _labelForType(remoteTransaction.type),
+      localValue: _labelForType(localDraft.type),
+    );
+    addHighlight(
+      label: 'Data',
+      remoteChanged: previousTransaction == null
+          ? false
+          : !_isSameDay(previousTransaction.date, remoteTransaction.date),
+      localChanged: !_isSameDay(localDraft.date, remoteTransaction.date),
+      remoteValue: _formatDate(remoteTransaction.date),
+      localValue: _formatDate(localDraft.date),
+    );
+
+    return highlights;
+  }
+
+  String _labelForType(TransactionType type) {
+    return type == TransactionType.income ? 'Receita' : 'Despesa';
+  }
+
+  bool _isSameDay(DateTime first, DateTime second) {
+    return first.year == second.year &&
+        first.month == second.month &&
+        first.day == second.day;
+  }
+
+  void _dismissConflict() {
+    setState(() {
+      _conflictMessage = null;
+      _conflictHighlights = const [];
+      _conflictBaseTransaction = null;
+      _conflictRemoteTransaction = null;
+      _isReloadingConflict = false;
+      _conflictRequiresClose = false;
+    });
+  }
+
+  void _restoreLocalDraft() {
+    final localDraftSnapshot = _localDraftSnapshot;
+    final conflictRemoteTransaction = _conflictRemoteTransaction;
+    if (localDraftSnapshot == null) {
+      return;
+    }
+    if (conflictRemoteTransaction == null) {
+      return;
+    }
+
+    setState(() {
+      _applyDraft(localDraftSnapshot);
+      _conflictMessage =
+          'Sua edição local foi reaplicada sobre a versão mais recente. Revise os dados antes de salvar.';
+      _conflictHighlights = _buildResolvedConflictHighlights(
+        previousTransaction: _conflictBaseTransaction,
+        remoteTransaction: conflictRemoteTransaction,
+        localDraft: localDraftSnapshot,
+      );
+      _conflictRequiresClose = false;
+    });
+  }
+
+  void _closeForm() {
+    FocusScope.of(context).unfocus();
+    Navigator.of(context).pop(false);
+  }
+
   void _submit() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final normalizedAmount = _amountController.text.replaceAll(',', '.');
-    final amount = double.tryParse(normalizedAmount);
+    final amount = CurrencyParser.parse(_amountController.text);
 
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(
@@ -119,7 +483,7 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     }
 
     final transaction = Transaction(
-      id:
+      id: _loadedTransaction?.id ??
           widget.transaction?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
       type: _selectedType,
@@ -127,6 +491,7 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
       date: _selectedDate,
       description: _descriptionController.text.trim(),
       category: _selectedCategory!,
+      updatedAt: _loadedTransaction?.updatedAt,
     );
 
     if (isEditing) {
@@ -143,170 +508,6 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     return '$day/$month/$year';
   }
 
-  /* Widget _buildDesignSystemStatesPreview() {
-    final brightness = MediaQuery.platformBrightnessOf(context);
-    final surfaceColor = AppColors.surface(brightness);
-    final dividerColor = AppColors.divider(brightness);
-    final errorColor = AppColors.error(brightness);
-    final disabledContainerColor = AppColors.onSurface(
-      brightness,
-    ).withValues(alpha: 0.12);
-    final disabledBorderColor = AppColors.onSurface(
-      brightness,
-    ).withValues(alpha: 0.32);
-    final disabledTextColor = AppColors.onSurface(
-      brightness,
-    ).withValues(alpha: 0.38);
-
-    return ExpansionTile(
-      tilePadding: EdgeInsets.zero,
-      childrenPadding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      title: Text(
-        'Estados DS (exemplos)',
-        style: AppTypography.titleMedium(brightness),
-      ),
-      children: [
-        const FtTextField(
-          label: 'Texto com helper',
-          hint: 'Digite um e-mail',
-          helper: 'Exemplo de helper em campo de texto.',
-          leadingIcon: Icon(Icons.email_outlined, size: AppSizes.iconSm),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        const FtTextField(
-          label: 'Texto com erro',
-          hint: 'Campo inválido',
-          error: true,
-          helper: 'Borda e estado de erro ativos.',
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        const FtTextField(
-          label: 'Texto desabilitado',
-          value: 'Valor somente leitura',
-          helper: 'Exemplo de estado desabilitado.',
-          enabled: false,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtDropdownField<String>(
-          label: 'Dropdown com helper',
-          value: 'alimentacao',
-          helperText: 'Exemplo de helper em dropdown.',
-          items: const [
-            DropdownMenuItem(value: 'alimentacao', child: Text('Alimentação')),
-            DropdownMenuItem(value: 'transporte', child: Text('Transporte')),
-          ],
-          onChanged: (_) {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtDropdownField<String>(
-          label: 'Dropdown com erro',
-          errorText: 'Selecione uma categoria válida.',
-          items: const [
-            DropdownMenuItem(value: 'moradia', child: Text('Moradia')),
-          ],
-          onChanged: (_) {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtDropdownField<String>(
-          label: 'Dropdown desabilitado',
-          value: 'saude',
-          helperText: 'Exemplo de estado desabilitado.',
-          enabled: false,
-          items: const [DropdownMenuItem(value: 'saude', child: Text('Saúde'))],
-          onChanged: (_) {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtDateField(
-          label: 'Data com helper',
-          valueText: _formatDate(_selectedDate),
-          helperText: 'Exemplo de helper em campo de data.',
-          onSelectDate: () {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtDateField(
-          label: 'Data com erro',
-          valueText: '--/--/----',
-          errorText: 'Informe uma data válida.',
-          onSelectDate: () {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtDateField(
-          label: 'Data desabilitada',
-          valueText: _formatDate(_selectedDate),
-          helperText: 'Exemplo de estado desabilitado.',
-          enabled: false,
-          onSelectDate: () {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtFormField(
-          label: 'Container FtFormField (direto)',
-          helperText: 'Helper aplicado pelo FtFormField.',
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              border: Border.all(
-                color: dividerColor,
-                width: AppBorders.widthMedium,
-              ),
-              borderRadius: BorderRadius.circular(AppBorders.radiusS),
-            ),
-            child: Text(
-              'Exemplo de child customizado.',
-              style: AppTypography.bodyMedium(brightness),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtFormField(
-          label: 'Container FtFormField com erro',
-          errorText: 'Erro demonstrativo do wrapper.',
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              border: Border.all(
-                color: errorColor,
-                width: AppBorders.widthMedium,
-              ),
-              borderRadius: BorderRadius.circular(AppBorders.radiusS),
-            ),
-            child: Text(
-              'Estado de erro no FtFormField.',
-              style: AppTypography.bodyMedium(brightness),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        FtFormField(
-          label: 'Container FtFormField desabilitado',
-          helperText: 'Estado desabilitado no wrapper.',
-          enabled: false,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: disabledContainerColor,
-              border: Border.all(
-                color: disabledBorderColor,
-                width: AppBorders.widthMedium,
-              ),
-              borderRadius: BorderRadius.circular(AppBorders.radiusS),
-            ),
-            child: Text(
-              'Child desabilitado.',
-              style: AppTypography.bodyMedium(
-                brightness,
-              ).copyWith(color: disabledTextColor),
-            ),
-          ),
-        ),
-      ],
-    );
-  } */
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<TransactionFormBloc, TransactionFormState>(
@@ -314,7 +515,18 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
         if (state is TransactionFormSuccess) {
           if (!context.mounted) return;
 
+          FocusScope.of(context).unfocus();
           Navigator.of(context).pop(true);
+        }
+
+        if (state is TransactionFormConflict) {
+          setState(() {
+            _localDraftSnapshot = _captureDraft();
+            _conflictMessage = state.message;
+            _conflictHighlights = const [];
+            _conflictBaseTransaction = _loadedTransaction ?? widget.transaction;
+            _conflictRequiresClose = false;
+          });
         }
 
         if (state is TransactionFormError) {
@@ -354,6 +566,23 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (_conflictMessage != null) ...[
+                    _TransactionConflictBanner(
+                      message: _conflictMessage!,
+                      highlights: _conflictHighlights,
+                      isReloading: _isReloadingConflict,
+                      onReload: isEditing && !_conflictRequiresClose
+                          ? _reloadLatestTransaction
+                          : null,
+                      onRestoreLocalDraft: _localDraftSnapshot != null &&
+                              !_conflictRequiresClose
+                          ? _restoreLocalDraft
+                          : null,
+                      onClose: _conflictRequiresClose ? _closeForm : null,
+                      onDismiss: _dismissConflict,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
                   Center(
                     child: Text(
                       isEditing ? 'Valor da transação' : 'Valor da transação',
@@ -397,14 +626,7 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                             }
 
                             final number = double.parse(numbersOnly) / 100;
-
-                            final formatted = number
-                                .toStringAsFixed(2)
-                                .replaceAll('.', ',')
-                                .replaceAllMapped(
-                                  RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-                                  (match) => '${match[1]}.',
-                                );
+                            final formatted = CurrencyParser.format(number);
 
                             _amountController.value = TextEditingValue(
                               text: formatted,
@@ -485,42 +707,73 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  FormField<TransactionCategory>(
-                    validator: (_) {
-                      if (_selectedCategory == null) {
-                        return 'Selecione a categoria.';
-                      }
+                  BlocBuilder<
+                    TransactionCategoryCatalogCubit,
+                    TransactionCategoryCatalogState
+                  >(
+                    builder: (context, categoryState) {
+                      final availableCategories = categoryState.catalog.byType(
+                        _selectedType,
+                      );
 
-                      return null;
-                    },
-                    builder: (field) {
-                      return FtFormField(
-                        label: 'Categoria',
-                        requiredField: true,
-                        errorText: field.errorText,
-                        child: Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: _availableCategories
-                              .map(
-                                (category) => FtChoiceChip(
-                                  icon:
-                                      TransactionCategoryIconMapper.fromCategory(
-                                        category,
-                                      ),
-                                  label: category.label,
-                                  selected:
-                                      _selectedCategory?.id == category.id,
-                                  onSelected: (_) {
-                                    setState(() {
-                                      _selectedCategory = category;
-                                    });
-                                    field.didChange(category);
-                                  },
+                      return FormField<TransactionCategory>(
+                        validator: (_) {
+                          if (_selectedCategory == null) {
+                            return 'Selecione a categoria.';
+                          }
+
+                          return null;
+                        },
+                        builder: (field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FtFormField(
+                                label: 'Categoria',
+                                requiredField: true,
+                                errorText: field.errorText,
+                                child: Wrap(
+                                  spacing: AppSpacing.sm,
+                                  runSpacing: AppSpacing.sm,
+                                  children: availableCategories
+                                      .map(
+                                        (category) => FtChoiceChip(
+                                          icon:
+                                              TransactionCategoryIconMapper.fromCategory(
+                                                category,
+                                              ),
+                                          label: category.label,
+                                          selected:
+                                              _selectedCategory?.id == category.id,
+                                          onSelected: (_) {
+                                            setState(() {
+                                              _selectedCategory = category;
+                                            });
+                                            field.didChange(category);
+                                          },
+                                        ),
+                                      )
+                                      .toList(),
                                 ),
-                              )
-                              .toList(),
-                        ),
+                              ),
+                              if (categoryState.canManage) ...[
+                                const SizedBox(height: AppSpacing.xs),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton.icon(
+                                    onPressed: () => _showCreateCategoryDialog(field),
+                                    icon: const Icon(Icons.add),
+                                    label: Text(
+                                      _selectedType == TransactionType.income
+                                          ? 'Nova categoria de receita'
+                                          : 'Nova categoria de despesa',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          );
+                        },
                       );
                     },
                   ),
@@ -552,7 +805,6 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                         ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  //_buildDesignSystemStatesPreview(),
                 ],
               ),
             ),
@@ -635,4 +887,197 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
 
     context.read<TransactionFormBloc>().add(TransactionDeleted(transaction.id));
   }
+}
+
+class _TransactionConflictBanner extends StatelessWidget {
+  const _TransactionConflictBanner({
+    required this.message,
+    required this.highlights,
+    required this.isReloading,
+    required this.onDismiss,
+    this.onReload,
+    this.onRestoreLocalDraft,
+    this.onClose,
+  });
+
+  final String message;
+  final List<_TransactionConflictHighlight> highlights;
+  final bool isReloading;
+  final VoidCallback onDismiss;
+  final VoidCallback? onReload;
+  final VoidCallback? onRestoreLocalDraft;
+  final VoidCallback? onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(AppBorders.radiusM),
+        border: Border.all(
+          color: colorScheme.error.withValues(alpha: 0.24),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.sync_problem_outlined, color: colorScheme.error),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Conflito detectado',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onErrorContainer,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onErrorContainer,
+            ),
+          ),
+          if (highlights.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ...highlights.map(
+              (highlight) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    _ConflictHighlightPill(source: highlight.source),
+                    Text(
+                      '${highlight.label}:',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onErrorContainer,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      highlight.value,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onErrorContainer,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.sm),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              if (onReload != null)
+                TextButton.icon(
+                  onPressed: isReloading ? null : onReload,
+                  icon: isReloading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.refresh),
+                  label: Text(
+                    isReloading ? 'Recarregando...' : 'Recarregar dados',
+                  ),
+                ),
+              if (onRestoreLocalDraft != null)
+                TextButton.icon(
+                  onPressed: onRestoreLocalDraft,
+                  icon: const Icon(Icons.history),
+                  label: const Text('Reaplicar minha edição'),
+                ),
+              if (onClose != null)
+                TextButton.icon(
+                  onPressed: onClose,
+                  icon: const Icon(Icons.close),
+                  label: const Text('Fechar tela'),
+                ),
+              TextButton(
+                onPressed: onDismiss,
+                child: const Text('Dispensar'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConflictHighlightPill extends StatelessWidget {
+  const _ConflictHighlightPill({required this.source});
+
+  final _TransactionConflictHighlightSource source;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isLocal = source == _TransactionConflictHighlightSource.local;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: isLocal
+            ? colorScheme.primary.withValues(alpha: 0.16)
+            : colorScheme.error.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppBorders.radiusXM),
+      ),
+      child: Text(
+        isLocal ? 'Local reaplicado' : 'Versão remota',
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: isLocal ? colorScheme.primary : colorScheme.error,
+        ),
+      ),
+    );
+  }
+}
+
+class _TransactionConflictHighlight {
+  const _TransactionConflictHighlight({
+    required this.label,
+    required this.value,
+    required this.source,
+  });
+
+  final String label;
+  final String value;
+  final _TransactionConflictHighlightSource source;
+}
+
+enum _TransactionConflictHighlightSource { remote, local }
+
+class _TransactionFormDraft {
+  const _TransactionFormDraft({
+    required this.type,
+    required this.amount,
+    required this.description,
+    required this.category,
+    required this.date,
+  });
+
+  final TransactionType type;
+  final double amount;
+  final String description;
+  final TransactionCategory? category;
+  final DateTime date;
 }

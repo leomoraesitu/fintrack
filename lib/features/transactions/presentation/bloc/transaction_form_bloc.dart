@@ -1,3 +1,4 @@
+import 'package:fintrack/features/transactions/domain/exceptions/transaction_conflict_exception.dart';
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_event.dart';
 import 'package:fintrack/features/transactions/presentation/bloc/transaction_form_state.dart';
@@ -15,42 +16,44 @@ class TransactionFormBloc
 
   final TransactionRepository _repository;
 
-  void _onTransactionCreated(
-  TransactionCreated event,
-  Emitter<TransactionFormState> emit,
-) {
-  emit(const TransactionFormSubmitting());
-
-  try {
-    _repository.addTransaction(event.transaction);
-    emit(const TransactionFormSuccess());
-  } catch (error) {
-    emit(TransactionFormError(message: error.toString()));
-  }
-}
-
-void _onTransactionUpdated(
-  TransactionUpdated event,
-  Emitter<TransactionFormState> emit,
-) {
-  emit(const TransactionFormSubmitting());
-
-  try {
-    _repository.updateTransaction(event.transaction);
-    emit(const TransactionFormSuccess());
-  } catch (error) {
-    emit(TransactionFormError(message: error.toString()));
-  }
-}
-
-  void _onTransactionDeleted(
-    TransactionDeleted event,
+  Future<void> _onTransactionCreated(
+    TransactionCreated event,
     Emitter<TransactionFormState> emit,
-  ) {
+  ) async {
     emit(const TransactionFormSubmitting());
 
     try {
-      _repository.deleteTransaction(event.id);
+      await _repository.addTransaction(event.transaction);
+      emit(const TransactionFormSuccess());
+    } catch (error) {
+      emit(TransactionFormError(message: error.toString()));
+    }
+  }
+
+  Future<void> _onTransactionUpdated(
+    TransactionUpdated event,
+    Emitter<TransactionFormState> emit,
+  ) async {
+    emit(const TransactionFormSubmitting());
+
+    try {
+      await _repository.updateTransaction(event.transaction);
+      emit(const TransactionFormSuccess());
+    } on TransactionConflictException catch (error) {
+      emit(TransactionFormConflict(message: error.message));
+    } catch (error) {
+      emit(TransactionFormError(message: error.toString()));
+    }
+  }
+
+  Future<void> _onTransactionDeleted(
+    TransactionDeleted event,
+    Emitter<TransactionFormState> emit,
+  ) async {
+    emit(const TransactionFormSubmitting());
+
+    try {
+      await _repository.deleteTransaction(event.id);
       emit(const TransactionFormSuccess());
     } catch (error) {
       emit(TransactionFormError(message: error.toString()));

@@ -9,8 +9,8 @@ class TransactionDashboardRepository implements DashboardRepository {
   final TransactionRepository _transactionRepository;
 
   @override
-  FinancialSummary getFinancialSummary() {
-    final transactions = _transactionRepository.getTransactions();
+  Future<FinancialSummary> getFinancialSummary() async {
+    final transactions = await _transactionRepository.getTransactions();
 
     double totalIncome = 0;
     double totalExpense = 0;
@@ -31,9 +31,9 @@ class TransactionDashboardRepository implements DashboardRepository {
   }
 
   @override
-  List<Transaction> getRecentTransactions({int limit = 3}) {
+  Future<List<Transaction>> getRecentTransactions({int limit = 3}) async {
     final transactions = List<Transaction>.from(
-      _transactionRepository.getTransactions(),
+      await _transactionRepository.getTransactions(),
     );
 
     transactions.sort((a, b) => b.date.compareTo(a.date));

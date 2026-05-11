@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fintrack/features/transactions/data/datasources/transaction_local_data_source.dart';
 import 'package:fintrack/features/transactions/data/models/transaction_storage_mapper.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
@@ -12,37 +14,45 @@ class LocalTransactionRepository implements TransactionRepository {
 
   final TransactionLocalDataSource _localDataSource;
   final List<Transaction> _transactions;
+  final StreamController<List<Transaction>> _transactionsController =
+      StreamController<List<Transaction>>.broadcast();
 
   @override
-  List<Transaction> getTransactions() {
+  Future<List<Transaction>> getTransactions() async {
     return List.unmodifiable(_transactions);
   }
 
   @override
-  void addTransaction(Transaction transaction) {
-    _transactions.add(transaction);
-    _persist();
+  Stream<List<Transaction>> watchTransactions() {
+    return _transactionsController.stream;
   }
 
   @override
-  void updateTransaction(Transaction transaction) {
+  Future<void> addTransaction(Transaction transaction) async {
+    _transactions.add(transaction);
+    await _persist();
+  }
+
+  @override
+  Future<void> updateTransaction(Transaction transaction) async {
     final index = _transactions.indexWhere((item) => item.id == transaction.id);
     if (index == -1) {
       return;
     }
 
     _transactions[index] = transaction;
-    _persist();
+    await _persist();
   }
 
   @override
-  void deleteTransaction(String id) {
+  Future<void> deleteTransaction(String id) async {
     _transactions.removeWhere((item) => item.id == id);
-    _persist();
+    await _persist();
   }
 
-  void _persist() {
+  Future<void> _persist() async {
     final payload = _transactions.map(TransactionStorageMapper.toMap).toList();
-    _localDataSource.saveTransactions(payload);
+    await _localDataSource.saveTransactions(payload);
+    _transactionsController.add(List.unmodifiable(_transactions));
   }
 }

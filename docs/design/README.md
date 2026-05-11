@@ -1,6 +1,6 @@
 # Design do FinTrack
 
-Esta pasta centraliza a documentacao visual do prototipo gerado no FlutterFlow Designer.
+Esta pasta centraliza a documentacao visual e os artefatos exportados do prototipo do FinTrack.
 
 ## Objetivo
 
@@ -8,13 +8,14 @@ Registrar a referencia visual do MVP para apoiar implementacao, revisao de inter
 
 ## Origem do prototipo
 
-- FF Designer: https://share.ffdesigner.app/TJmmglOh9GCAtfNfXBOU
+- link historico do prototipo exportado: <https://share.ffdesigner.app/TJmmglOh9GCAtfNfXBOU>
 - temas exportados: light mode e dark mode
 - origem dos frames: pacote de midia anexado ao projeto
+- o projeto nao depende de FlutterFlow para evolucao de design ou implementacao
 
 ## Documentos
 
-- [Handoff do FF Designer](./ff-designer-handoff.md)
+- [Handoff visual do prototipo](./ff-designer-handoff.md)
 - [Design system](./design-system.md)
 - [Especificacao de telas](./screen-specs.md)
 - [Inventario de assets](./assets-inventory.md)
@@ -42,7 +43,7 @@ assets/
 
 O pacote atual cobre o prototipo visual do MVP para:
 
-- login mock
+- acesso inicial com autenticacao e modo demo
 - shell principal
 - dashboard
 - lista de transacoes
@@ -61,6 +62,6 @@ O pacote atual cobre o prototipo visual do MVP para:
 
 ## Atualizacao recomendada
 
-- manter novas exportacoes do FF Designer nesta mesma pasta quando substituirem a versao atual
+- manter novos artefatos exportados nesta mesma pasta quando substituirem a versao atual
 - se houver nova rodada ampla de design, criar uma subpasta versionada em `assets/frames/`
 - atualizar este indice e o handoff sempre que houver mudanca relevante de fluxo, estilo ou composicao das telas

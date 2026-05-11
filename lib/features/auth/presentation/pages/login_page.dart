@@ -1,8 +1,11 @@
+import 'package:fintrack/features/auth/domain/repositories/auth_repository.dart';
+import 'package:fintrack/features/auth/presentation/bloc/auth_form_bloc.dart';
 import 'package:fintrack/features/auth/presentation/widgets/auth_branding_header.dart';
 import 'package:fintrack/features/auth/presentation/widgets/auth_demo_info_banner.dart';
 import 'package:fintrack/features/auth/presentation/widgets/auth_login_card.dart';
 import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key, this.onEnterDemo});
@@ -26,7 +29,12 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: AppSpacing.xs),
                       const AuthBrandingHeader(),
                       const SizedBox(height: AppSpacing.xl),
-                      AuthLoginCard(onEnterDemo: onEnterDemo),
+                      BlocProvider<AuthFormBloc>(
+                        create: (context) => AuthFormBloc(
+                          authRepository: context.read<AuthRepository>(),
+                        ),
+                        child: AuthLoginCard(onEnterDemo: onEnterDemo),
+                      ),
                       const SizedBox(height: AppSpacing.md),
                       const AuthDemoInfoBanner(),
                     ],

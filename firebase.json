@@ -1,0 +1,38 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "emulators": {
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    },
+    "singleProjectMode": true
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fintrack-dev-4e043",
+          "appId": "1:871116334001:android:693c11bdd654846f6e5390",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fintrack-dev-4e043",
+          "configurations": {
+            "android": "1:871116334001:android:693c11bdd654846f6e5390",
+            "ios": "1:871116334001:ios:4b54663f94a4b9766e5390",
+            "macos": "1:871116334001:ios:4b54663f94a4b9766e5390",
+            "web": "1:871116334001:web:5b07b4f90a07ceeb6e5390",
+            "windows": "1:871116334001:web:5d29799ead9573e06e5390"
+          }
+        }
+      }
+    }
+  }
+}

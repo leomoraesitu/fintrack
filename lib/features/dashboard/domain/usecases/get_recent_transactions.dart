@@ -6,7 +6,7 @@ class GetRecentTransactions {
 
   final DashboardRepository _repository;
 
-  List<Transaction> call({int limit = 3}) {
+  Future<List<Transaction>> call({int limit = 3}) {
     return _repository.getRecentTransactions(limit: limit);
   }
 }

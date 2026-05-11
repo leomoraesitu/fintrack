@@ -1,15 +1,13 @@
 
-# <img src="docs/design/assets/branding/logo/icone-fintrack.png" alt="Ícone do FinTrack" width="28" /> FinTrack
+# FinTrack
 
-<p align="center">
-  <img src="docs/design/assets/branding/wordmark/logo-fintrack-light.png" alt="Wordmark do FinTrack" width="240" />
-</p>
+![Ícone do FinTrack](docs/design/assets/branding/logo/icone-fintrack.png)
+
+![Wordmark do FinTrack](docs/design/assets/branding/wordmark/logo-fintrack-light.png)
 
 FinTrack é um aplicativo de finanças pessoais em Flutter, em desenvolvimento, com foco em ajudar usuários a acompanhar receitas, despesas e saldo em uma experiência mobile simples.
 
-<p align="center">
-	<img src="docs/design/assets/demo/fintrack-v0.4.0-release.gif" alt="Demonstração do FinTrack" width="1280" />
-</p>
+![Demonstração do FinTrack](docs/design/assets/demo/fintrack-v0.4.0-release.gif)
 
 ## Resumo executivo
 
@@ -27,41 +25,46 @@ Para leitura de recrutadores e avaliadores técnicos, o repositório foi pensado
 
 ## Status
 
-O projeto está em desenvolvimento ativo, com entregas incrementais validadas até a Sprint 4.
+O projeto está em desenvolvimento ativo, com entregas incrementais validadas até a Sprint 5.
 
 **Progresso até o momento:**
-- MVP funcional parcial: autenticação mock, shell principal, dashboard com resumo financeiro, transações recentes, cadastro/edição/exclusão de transações e categorias padrão.
+
+- MVP funcional parcial: autenticação real, modo demo, shell principal, dashboard com resumo financeiro, transações recentes, cadastro/edição/exclusão de transações e categorias padrão.
+- Autenticação real por e-mail/senha e CRUD remoto de transações com Firebase Auth e Firestore.
 - Estrutura multiplataforma validada (Android, iOS, Web, Windows, Linux, macOS).
 - Cobertura de testes ampliada (widget/unitários).
 - Documentação técnica, visual e de produto evoluída em paralelo à implementação.
 
 **Em desenvolvimento:**
-- Filtros de transações por categoria, tipo e período.
-- Persistência local das transações com `shared_preferences` (ver ADR-003).
-- Integração do backend Firebase para autenticação real e sincronização de dados ([ADR-006](docs/adr/adr-006-adocao-firebase.md)).
+
+- Sincronização multi-dispositivo avançada com conciliação entre versões.
 - Refinamentos visuais e de estados de interface.
 
 ## Histórico de entregas por Sprint
 
 ### Sprint 0 (Fundação)
+
 - Substituição do app demo por uma shell inicial do FinTrack.
 - Definição da estrutura de pastas e tema base.
 - Preparação da navegação inicial e smoke tests.
 - Início dos padrões de organização do projeto.
 
 ### Sprint 1 (Fluxo principal)
+
 - Implementação da autenticação mock.
 - Preparação da shell principal com navegação.
 - Modelagem da entidade de transação.
 - Criação da primeira listagem e formulário inicial.
 
 ### Sprint 2 (Proposta de valor do produto)
+
 - Conclusão do CRUD de transações.
 - Inclusão de categorias padrão.
 - Construção do dashboard com resumo financeiro.
 - Conexão dos fluxos principais do usuário.
 
 ### Sprint 3 (Fundação técnica e arquitetura)
+
 - Substituição da tela padrão do Flutter pela primeira experiência do FinTrack.
 - Estruturação inicial do projeto com separação clara de camadas (Presentation, Domain, Data).
 - Modelagem das entidades principais do domínio financeiro.
@@ -70,6 +73,7 @@ O projeto está em desenvolvimento ativo, com entregas incrementais validadas at
 - Documentação técnica inicial e primeiros ADRs.
 
 ### Sprint 4 (Implementação orientada a clean code e evolução)
+
 - Implementação do cadastro, edição e exclusão de transações com categorias padrão.
 - Integração dos agregados financeiros (saldo, receitas, despesas) ao dashboard.
 - Refino do fluxo de navegação e estados de interface.
@@ -77,6 +81,18 @@ O projeto está em desenvolvimento ativo, com entregas incrementais validadas at
 - Consolidação do handoff visual e atualização da documentação de design.
 - Padronização de código, revisão contínua e refatoração incremental.
 - Estrutura multiplataforma validada para Android, iOS, Web, Windows, Linux e macOS.
+
+### Sprint 5 (Backend e sincronização)
+
+- Configuração do Firebase no app Flutter.
+- Implementação de login/cadastro com Firebase Auth.
+- Integração do CRUD remoto de transações com Firestore para usuários autenticados.
+- Provisionamento do catálogo de categorias em `users/{userId}/categories` para contas autenticadas.
+- Migração explícita de transações locais para Firestore após login/cadastro real.
+- Preservação do modo demo com persistência local.
+- Detecção básica de conflito remoto por `updatedAt`, com recarga da versão mais recente, resumo das diferenças, reaplicação do rascunho local e fechamento orientado quando a transação não existe mais no backend.
+- Regras Firestore versionadas para isolar transações por usuário.
+- Testes cobrindo autenticação, repositório remoto, regras Firestore e fluxo de conflito no formulário.
 
 ## Visão do produto
 
@@ -91,24 +107,32 @@ A primeira versão está focada no essencial:
 ## Funcionalidades implementadas no MVP atual
 
 ### 100% implementado
-- login mock com entrada em modo demo e logout
+
+- login/cadastro real com Firebase Auth
+- modo demo com entrada local e logout
 - shell principal com navegação entre dashboard e transações
 - dashboard com saldo atual, totais de receitas e despesas
 - seção de transações recentes com CTA para abrir a listagem completa
 - cadastro de transações de receita e despesa
 - edição e exclusão de transações com confirmação
 - categorias padrão do MVP integradas ao formulário e à listagem
+- criação inline de categorias no formulário para contas autenticadas, com persistência no catálogo remoto
+- tela simples de categorias para contas autenticadas, com listagem do catálogo e criação manual
 - atualização dos agregados financeiros a partir das transações cadastradas
+- persistência local no modo demo
+- persistência remota no Firestore para contas autenticadas
+- catálogo remoto de categorias provisionado no Firestore para contas autenticadas
+- migração explícita de transações locais para o backend ao entrar com conta autenticada
+- tratamento básico de conflito remoto na edição com recarga, resumo das diferenças e reaplicação do rascunho local
 
 ### Em andamento
-- filtros de transações por categoria, tipo e período
-- persistência local das transações
+
+- sincronização multi-dispositivo avançada com conciliação entre versões
 - refinamentos visuais e de estados de interface
 
 ## Próximas entregas do MVP
 
-- filtros de transações por categoria, tipo e período
-- persistência local das transações entre sessões (ADR-003)
+- conciliação avançada entre versão local e remota em conflitos de edição
 - refinamentos visuais da dashboard e estados de interface
 - expansão da cobertura de testes para novas iterações
 
@@ -118,37 +142,37 @@ O escopo funcional e visual já está consolidado, mesmo antes da implementaçã
 
 ```mermaid
 flowchart LR
-	A[Login mock] --> B[Shell principal]
-	B --> C[Dashboard]
-	B --> D[Lista de transações]
-	C --> I[Transações recentes]
-	I --> D
-	D --> E[Criar transação]
-	D --> F[Editar transação]
-	F --> H[Confirmação de exclusão]
-	C --> D
+  A[Login real ou modo demo] --> B[Shell principal]
+  B --> C[Dashboard]
+  B --> D[Lista de transações]
+  C --> I[Transações recentes]
+  I --> D
+  D --> E[Criar transação]
+  D --> F[Editar transação]
+  F --> H[Confirmação de exclusão]
+  C --> D
 ```
 
 ## Arquitetura pensada para o MVP
 
 ```mermaid
 flowchart TD
-	UI[Presentation\nTelas Widgets Bloc Cubit] --> Domain[Domain\nEntidades Casos de uso Contratos]
-	Domain --> Data[Data\nModels Datasources Repositories]
-	Design[Docs de UX/UI\nHandoff + Design system] -. orienta .-> UI
-	Product[Docs de produto\nVisão MVP Backlog] -. orienta .-> Domain
-	Workflow[Workflow\nADRs Testes Padrões] -. governa .-> UI
-	Workflow -. governa .-> Data
+  UI[Presentation\nTelas Widgets Bloc Cubit] --> Domain[Domain\nEntidades Casos de uso Contratos]
+  Domain --> Data[Data\nModels Datasources Repositories]
+  Design[Docs de UX/UI\nHandoff + Design system] -. orienta .-> UI
+  Product[Docs de produto\nVisão MVP Backlog] -. orienta .-> Domain
+  Workflow[Workflow\nADRs Testes Padrões] -. governa .-> UI
+  Workflow -. governa .-> Data
 ```
 
 ## Direção de entrega
 
 ```mermaid
 flowchart LR
-	A[Descoberta do produto] --> B[Planejamento ágil]
-	B --> C[Fundação técnica]
-	C --> D[Implementação orientada a clean code]
-	D --> E[Testes e evolução contínua]
+  A[Descoberta do produto] --> B[Planejamento ágil]
+  B --> C[Fundação técnica]
+  C --> D[Implementação orientada a clean code]
+  D --> E[Testes e evolução contínua]
 ```
 
 ## Referência visual
@@ -157,9 +181,9 @@ Os principais frames do protótipo já estão versionados no repositório e serv
 
 ### Galeria do protótipo
 
-| Login mock | Shell principal | Dashboard |
+| Login | Shell principal | Dashboard |
 | --- | --- | --- |
-| ![Login Mock](docs/design/assets/frames/light/Login%20Mock.png) | ![Shell Principal](docs/design/assets/frames/light/Shell%20Principal.png) | ![Dashboard](docs/design/assets/frames/light/Dashboard.png) |
+| ![Acesso inicial](docs/design/assets/frames/light/Login%20Mock.png) | ![Shell Principal](docs/design/assets/frames/light/Shell%20Principal.png) | ![Dashboard](docs/design/assets/frames/light/Dashboard.png) |
 
 | Lista de transações | Filtros | Criar transação |
 | --- | --- | --- |
@@ -174,12 +198,14 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 ## Estado atual do repositório
 
 - aplicativo Flutter funcional com fluxo principal navegável
-- autenticação mock com sessão local em memória
+- autenticação real com Firebase Auth e modo demo local
 - dashboard com resumo financeiro calculado a partir das transações
 - listagem de transações com criação, edição, exclusão e categorias padrão
+- CRUD remoto de transações no Firestore para usuários autenticados
+- regras Firestore versionadas para isolamento por usuário
 - estrutura multiplataforma gerada para Android, iOS, Web, Windows, Linux e macOS
 - testes de widget cobrindo fluxos principais de dashboard e transações
-- testes unitários cobrindo cálculo de resumo financeiro e transações recentes
+- testes unitários cobrindo cálculo de resumo financeiro, transações recentes, autenticação e repositório remoto
 - protótipo visual do MVP documentado em [docs/design/](docs/design/)
 - documentação técnica e funcional estruturada para continuidade do projeto
 
@@ -202,8 +228,20 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 - Flutter SDK instalado
 - Dart SDK disponível pelo Flutter
 - emulador, simulador, navegador ou dispositivo físico configurado
+- Node.js e npm para validar regras do Firestore
+- Java no `PATH` para executar o Firestore Emulator
 
-> **Nota:** O app utiliza persistência local em memória ou via `shared_preferences`. Não há backend ou autenticação real no MVP.
+> **Nota:** O app usa Firebase Auth e Firestore para contas reais. O modo demo continua usando persistência local via `shared_preferences`.
+
+### Preparar Firebase para contas reais
+
+1. Crie ou reutilize um projeto no Firebase Console.
+2. Ative Authentication com provedor e-mail/senha.
+3. Ative o Firestore Database.
+4. Adicione os apps da plataforma que será executada localmente.
+5. Posicione `android/app/google-services.json` no Android e gere `lib/firebase_options.dart` com FlutterFire CLI para a plataforma desejada.
+
+O passo a passo completo está em [docs/engineering/firebase-setup.md](docs/engineering/firebase-setup.md).
 
 ### Executar Localmente
 
@@ -217,6 +255,23 @@ flutter run
 ```bash
 flutter test
 ```
+
+### Validar backend e regras
+
+```bash
+flutter analyze
+flutter test
+npm install
+npm run test:firestore-rules
+```
+
+### Gerar APK de release
+
+```bash
+flutter build apk --release
+```
+
+O artefato gerado fica em `build/app/outputs/flutter-apk/app-release.apk`.
 
 ## Estrutura do projeto
 
@@ -266,8 +321,8 @@ macos/     Target macOS
 ### 6. Próximos passos do MVP
 
 - filtros de transações por categoria, tipo e período
-- persistência local das transações
-- integração do backend Firebase (autenticação real, CRUD, sync)
+- migração de dados locais para conta autenticada
+- sincronização multi-dispositivo avançada
 - refinamentos visuais e de estados de interface
 
 ## Documentação detalhada
@@ -310,6 +365,7 @@ Consulte o histórico consolidado de entregas e escopo da release mais recente e
 Este repositório faz parte de um portfólio em Flutter e está sendo desenvolvido para demonstrar fundamentos de desenvolvimento mobile, visão de produto, capacidade de documentação técnica e maturidade de estruturação de um projeto antes mesmo da fase intensa de implementação.
 
 Mais do que um app de finanças em construção, o FinTrack evidencia processo, arquitetura, documentação e evolução incremental. O projeto demonstra:
+
 - definição de escopo e organização do trabalho
 - consolidação de UX/UI e handoff visual
 - decisões arquiteturais registradas em ADRs

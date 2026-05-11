@@ -14,6 +14,12 @@ class TransactionFormSuccess extends TransactionFormState {
   const TransactionFormSuccess();
 }
 
+class TransactionFormConflict extends TransactionFormState {
+  const TransactionFormConflict({required this.message});
+
+  final String message;
+}
+
 class TransactionFormError extends TransactionFormState {
   final String message;
 

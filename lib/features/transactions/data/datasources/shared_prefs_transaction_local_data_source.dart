@@ -20,11 +20,19 @@ class SharedPrefsTransactionLocalDataSource
       return [];
     }
 
-    final decoded = jsonDecode(raw) as List<dynamic>;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) {
+        return [];
+      }
 
-    return decoded
-        .map((item) => Map<String, dynamic>.from(item as Map))
-        .toList();
+      return decoded
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList();
+    } catch (_) {
+      return [];
+    }
   }
 
   @override

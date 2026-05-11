@@ -6,7 +6,7 @@ import 'package:fintrack/features/transactions/presentation/widgets/transaction_
 import 'package:fintrack/shared/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:fintrack/core/utils/currency_parser.dart';
 
 class DashboardPage extends StatefulWidget {
   final VoidCallback? onViewAllTransactions;
@@ -29,11 +29,6 @@ class _DashboardPageState extends State<DashboardPage> {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
-
-    final currencyFormat = NumberFormat.currency(
-      locale: 'pt_BR',
-      symbol: 'R\$',
-    );
 
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
@@ -68,9 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   width: AppSizes.widthFull,
                   child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppBorders.radiusXL,
-                      ),
+                      borderRadius: BorderRadius.circular(AppBorders.radiusXL),
                     ),
                     color: Theme.of(context).colorScheme.primary,
                     elevation: AppShadows.sm.first.blurRadius,
@@ -91,7 +84,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
 
                                   Text(
-                                    currencyFormat.format(state.summary.balance),
+                                    CurrencyParser.formatWithSymbol(
+                                      state.summary.balance,
+                                    ),
                                     style: textTheme.headlineLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: colorScheme.surface,
@@ -178,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         icon: Icons.trending_up_rounded,
                         label: 'RECEITAS',
                         value:
-                            '+ ${currencyFormat.format(state.summary.totalIncome)}',
+                            '+ ${CurrencyParser.formatWithSymbol(state.summary.totalIncome)}',
                         color: AppColors.success(Theme.of(context).brightness),
                       ),
                     ),
@@ -188,7 +183,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         icon: Icons.trending_down_rounded,
                         label: 'DESPESAS',
                         value:
-                            '- ${currencyFormat.format(state.summary.totalExpense)}',
+                            '- ${CurrencyParser.formatWithSymbol(state.summary.totalExpense)}',
                         color: Theme.of(context).colorScheme.error,
                       ),
                     ),

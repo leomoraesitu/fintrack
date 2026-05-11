@@ -13,15 +13,15 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final GetFinancialSummary _getFinancialSummary;
   final GetRecentTransactions _getRecentTransactions;
 
-  void _onDashboardRequested(
+  Future<void> _onDashboardRequested(
     DashboardRequested event,
     Emitter<DashboardState> emit,
-  ) {
+  ) async {
     emit(DashboardLoading());
 
     try {
-      final summary = _getFinancialSummary();
-      final recentTransactions = _getRecentTransactions();
+      final summary = await _getFinancialSummary();
+      final recentTransactions = await _getRecentTransactions();
 
       if (summary.totalIncome == 0 && summary.totalExpense == 0) {
         emit(DashboardEmpty());

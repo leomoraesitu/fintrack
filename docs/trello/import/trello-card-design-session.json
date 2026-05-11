@@ -41,14 +41,14 @@
       "cards": [
         {
           "name": "Card [SP:5]: Consolidar handoff de UX/UI e especificacao visual do MVP",
-          "desc": "Objetivo: transformar o contexto da sessao de UX/UI em referencia visual utilizavel para implementacao, revisao de interface e validacao do MVP do FinTrack.\n\nResultado consolidado:\n- Handoff do prototipo do FlutterFlow Designer documentado.\n- Design system observado e convertido em orientacoes de implementacao.\n- Especificacao de telas do fluxo principal registrada em PT-BR.\n- Estrutura de assets e frames light/dark organizada dentro de docs/design.\n\nCriterios de aceite:\n- Existe indice de design centralizando os documentos do prototipo.\n- O escopo visual do MVP cobre login, shell principal, dashboard, lista de transacoes, filtros, criar/editar transacao, confirmacao de exclusao e estados de interface.\n- O handoff liga frames a documentos funcionais do projeto.\n- O design system orienta tokens, componentes e regras de implementacao.",
+          "desc": "Objetivo: transformar o contexto da sessao de UX/UI em referencia visual utilizavel para implementacao, revisao de interface e validacao do MVP do FinTrack.\n\nResultado consolidado:\n- Handoff do prototipo visual documentado.\n- Design system observado e convertido em orientacoes de implementacao.\n- Especificacao de telas do fluxo principal registrada em PT-BR.\n- Estrutura de assets e frames light/dark organizada dentro de docs/design.\n\nCriterios de aceite:\n- Existe indice de design centralizando os documentos do prototipo.\n- O escopo visual do MVP cobre login, shell principal, dashboard, lista de transacoes, filtros, criar/editar transacao, confirmacao de exclusao e estados de interface.\n- O handoff liga frames a documentos funcionais do projeto.\n- O design system orienta tokens, componentes e regras de implementacao.",
           "idLabels": ["lab_sprint_0", "lab_area_foundation", "lab_area_auth", "lab_area_navigation", "lab_area_transactions", "lab_type_tech"],
           "checklists": [
             {
               "name": "Entregas da sessao",
               "items": [
                 "Documentar a origem do prototipo em docs/design/README.md",
-                "Registrar o handoff do FF Designer em docs/design/ff-designer-handoff.md",
+                "Registrar o handoff visual do prototipo em docs/design/ff-designer-handoff.md",
                 "Consolidar tokens e padroes visuais em docs/design/design-system.md",
                 "Especificar a composicao das telas em docs/design/screen-specs.md",
                 "Mapear o escopo visual do MVP para login, shell, dashboard e transacoes",

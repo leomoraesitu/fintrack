@@ -15,6 +15,8 @@ class TransactionStorageMapper {
       'categoryId': transaction.category.id,
       'categoryLabel': transaction.category.label,
       'categoryType': transaction.category.type.name,
+      if (transaction.updatedAt != null)
+        'updatedAt': transaction.updatedAt!.toIso8601String(),
     };
   }
 
@@ -35,6 +37,23 @@ class TransactionStorageMapper {
         label: map['categoryLabel'] as String,
         type: categoryType,
       ),
+      updatedAt: _parseOptionalDate(map['updatedAt']),
     );
+  }
+
+  static Transaction? tryFromMap(Map<String, dynamic> map) {
+    try {
+      return fromMap(map);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static DateTime? _parseOptionalDate(Object? value) {
+    if (value == null) {
+      return null;
+    }
+
+    return DateTime.parse(value as String);
   }
 }

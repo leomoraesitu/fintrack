@@ -8,29 +8,30 @@ Definir o recorte minimo do FinTrack que entrega valor de produto, viabiliza dem
 
 ### Funcionalidades principais
 
-- autenticacao mock para entrada no app
+- autenticacao real por e-mail/senha e modo demo para entrada rapida no app
 - dashboard com saldo, total de receitas e total de despesas do periodo
 - CRUD de transacoes
 - categorias padrao para classificacao de lancamentos
 - filtros por tipo, categoria e periodo
-- persistencia local
+- persistencia local no modo demo e persistencia remota para contas autenticadas
 
 ## Status atual do escopo
 
-### Ja implementado ate o fim da Sprint 2
+### Ja implementado no estado atual
 
-- autenticacao mock para entrada no app
+- autenticacao real por e-mail/senha e modo demo para entrada rapida no app
 - shell principal com navegacao entre dashboard e transacoes
 - dashboard com saldo, total de receitas e total de despesas
 - secao de transacoes recentes com CTA para abrir a listagem completa
-- CRUD de transacoes em memoria
+- CRUD de transacoes com persistencia local no modo demo e Firestore em contas autenticadas
 - categorias padrao para classificacao de lancamentos
-- cobertura de testes para fluxos principais, categorias e dashboard
+- filtros por tipo, categoria e periodo
+- deteccao basica de conflito remoto por `updatedAt`, com recarga da versao atual e orientacao de fechamento quando a transacao nao existe mais no backend
+- cobertura de testes para fluxos principais, categorias, dashboard, autenticacao, repositório remoto e regras Firestore
 
 ### Ainda pendente dentro do MVP
 
-- filtros por tipo, categoria e periodo
-- persistencia local entre sessoes
+- sincronizacao multi-dispositivo avancada com conciliacao entre versoes
 - refinamentos de estados vazios, loading e tratamento de falhas em pontos restantes do app
 - consolidacao final da cobertura de testes para os incrementos restantes
 
@@ -44,15 +45,15 @@ Definir o recorte minimo do FinTrack que entrega valor de produto, viabiliza dem
 
 ## Requisitos funcionais
 
-- o usuario pode entrar no app por um fluxo mock
+- o usuario pode entrar no app por conta real ou modo demo
 - o usuario pode criar, editar e excluir transacoes
 - o usuario pode classificar transacoes como receita ou despesa
 - o usuario pode visualizar o saldo consolidado e o resumo mensal
 - o usuario pode filtrar transacoes por periodo, tipo e categoria
-- o app persiste os dados localmente entre sessoes
+- o app persiste dados localmente no modo demo e remotamente quando ha conta autenticada
 
 Observacao:
-os quatro primeiros requisitos ja estao implementados no estado atual do projeto. Os requisitos de filtros e persistencia local permanecem como proximos passos do MVP.
+todos os requisitos acima ja estao implementados no estado atual do projeto. O que permanece pendente no MVP e a evolucao da sincronizacao e da experiencia de falha para cenarios mais avancados.
 
 ## Requisitos nao funcionais
 
@@ -65,9 +66,7 @@ os quatro primeiros requisitos ja estao implementados no estado atual do projeto
 
 ## Fora do escopo do MVP
 
-- backend real
-- sincronizacao em nuvem
-- multiusuario
+- conciliacao avancada de conflitos multi-dispositivo
 - cadastro completo de usuario
 - graficos avancados
 - exportacao de dados
@@ -78,5 +77,5 @@ os quatro primeiros requisitos ja estao implementados no estado atual do projeto
 
 O MVP depende das seguintes definicoes antes de implementacoes mais amplas:
 
-- escolha do mecanismo de persistencia local
+- estrategia de conciliacao entre versoes local e remota
 - convencao de tratamento de falhas e estados para os fluxos restantes

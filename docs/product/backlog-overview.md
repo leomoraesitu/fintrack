@@ -15,7 +15,7 @@ O detalhamento do board, com convencoes de cards, story points, labels e Definit
 - Sprint 2 concluída com categorias padrão, dashboard com resumo financeiro, transações recentes e cobertura de testes ampliada
 - Sprint 3 concluída com fundação técnica, arquitetura em camadas, primeiros testes e documentação inicial
 - Sprint 4 concluída com cadastro/edição/exclusão de transações, integração dos agregados financeiros ao dashboard, refino de navegação, expansão de testes, handoff visual consolidado e estrutura multiplataforma validada
-- Sprint 5 (em andamento): integração do backend Firebase, migração de autenticação e dados, sincronização multi-dispositivo, ajustes de segurança e documentação
+- Sprint 5 (em andamento): integração do backend Firebase iniciada com autenticação real, CRUD remoto de transações, migração local para Firestore, sincronização básica por stream, regras de segurança e documentação; sincronização avançada e tratamento de conflitos seguem como pendências
 
 ## Macroetapas do backlog
 
@@ -42,8 +42,8 @@ O detalhamento do board, com convencoes de cards, story points, labels e Definit
 
 Status: concluida
 
-
 ### Sprint 3 - Robustez e fechamento do MVP
+
 - adicionar filtros e ordenação básica
 - fortalecer tratamento de erros, loading e estados vazios
 - ampliar testes automatizados
@@ -52,6 +52,7 @@ Status: concluida
 Status: concluída
 
 ### Sprint 4 - Evolução e consolidação do MVP
+
 - implementar cadastro, edição e exclusão de transações com categorias padrão
 - integrar agregados financeiros (saldo, receitas, despesas) ao dashboard
 - refinar fluxo de navegação e estados de interface
@@ -63,6 +64,7 @@ Status: concluída
 Status: concluída
 
 ### Sprint 5 - Integração do Backend e Sincronização
+
 - integrar backend Firebase ao app (autenticação real, Firestore)
 - migrar autenticação e CRUD de transações para o backend
 - implementar sincronização multi-dispositivo
@@ -74,6 +76,16 @@ Status: concluída
 - preparar release público com APK e documentação
 
 Status: em andamento
+
+Status parcial:
+
+- Firebase Auth integrado para login/cadastro por e-mail e senha
+- Firestore integrado ao CRUD de transacoes para usuarios autenticados
+- migracao explicita de transacoes locais para Firestore apos login/cadastro real
+- sincronizacao basica de transacoes autenticadas via stream do Firestore
+- deteccao basica de conflito por `updatedAt` na edicao remota, com recarga da versao atual, resumo das diferencas, reaplicacao da edicao local e saida orientada quando a transacao foi removida
+- modo demo preservado com persistencia local
+- regras Firestore versionadas em `firestore.rules`
 
 ## Regras de priorizacao
 

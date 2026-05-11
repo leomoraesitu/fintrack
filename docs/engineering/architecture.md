@@ -37,7 +37,6 @@ Responsabilidades:
 
 ### Data
 
-
 Responsável por modelos, fontes de dados e implementações de repositório.
 
 Responsabilidades:
@@ -49,6 +48,7 @@ Responsabilidades:
 ### Integração com Firebase
 
 Com a adoção do Firebase ([ADR-006](../adr/adr-006-adocao-firebase.md)), a camada de dados passa a suportar:
+
 - Autenticação real de usuários (firebase_auth)
 - Persistência e sincronização de transações e categorias no Firestore
 - Listeners para atualização em tempo real
@@ -60,10 +60,10 @@ Fluxo simplificado:
 
 ```mermaid
 flowchart LR
-	UI[Presentation] --> Domain[Domain]
-	Domain --> Data[Data: Local/Firebase]
-	Data -->|Auth| FirebaseAuth
-	Data -->|CRUD| Firestore
+  UI[Presentation] --> Domain[Domain]
+  Domain --> Data[Data: Local/Firebase]
+  Data -->|Auth| FirebaseAuth
+  Data -->|CRUD| Firestore
 ```
 
 ## Fluxo de dependencia

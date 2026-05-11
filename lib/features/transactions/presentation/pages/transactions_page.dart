@@ -1,6 +1,8 @@
 import 'package:fintrack/features/transactions/domain/entities/transaction.dart';
 import 'package:fintrack/features/transactions/presentation/mappers/transaction_category_icon_mapper.dart';
+import 'package:fintrack/features/transactions/presentation/pages/transaction_categories_page.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transaction_form_page.dart';
+import 'package:fintrack/features/transactions/presentation/cubit/transaction_category_catalog_cubit.dart';
 import 'package:fintrack/features/transactions/presentation/widgets/transaction_list_item.dart';
 import 'package:fintrack/design_system/widgets/widgets.dart';
 import 'package:fintrack/shared/tokens/tokens.dart';
@@ -14,7 +16,6 @@ import '../bloc/transaction_list_state.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_category.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_list_query.dart';
 import 'package:fintrack/features/transactions/domain/entities/transaction_type.dart';
-import 'package:fintrack/features/transactions/domain/entities/transaction_categories.dart';
 import 'package:fintrack/features/transactions/domain/repositories/transaction_repository.dart';
 
 class TransactionsPage extends StatelessWidget {
@@ -103,59 +104,116 @@ class _TransactionsViewState extends State<TransactionsView> {
                   AppSpacing.md,
                   AppSpacing.sm,
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: FtButton(
-                        onPressed: _openFiltersBottomSheet,
-                        label: 'Filtros',
-                        icon: Icon(Icons.filter_alt_outlined),
-                        size: FtButtonSize.large,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.xm),
-                    PopupMenuButton<TransactionSortOrder>(
-                      tooltip: 'Ordenar',
-                      onSelected: _updateSortOrder,
-                      itemBuilder: (context) => const [
-                        PopupMenuItem(
-                          value: TransactionSortOrder.newestFirst,
-                          child: Text('Mais recentes'),
-                        ),
-                        PopupMenuItem(
-                          value: TransactionSortOrder.oldestFirst,
-                          child: Text('Mais antigas'),
-                        ),
-                      ],
-                      child: Container(
-                        height: AppSizes.buttonLg,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xm,
-                          vertical: AppSpacing.xm,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorScheme.primary,
-                          borderRadius: BorderRadius.circular(
-                            AppBorders.radiusS,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.swap_vert, color: colorScheme.onPrimary),
-                            const SizedBox(width: AppSpacing.sm),
-                            Text(
-                              _currentSortLabel(),
-                              style: textTheme.labelLarge?.copyWith(
-                                color: colorScheme.onPrimary,
-                                fontWeight: FontWeight.w600,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final hasCategories = context
+                        .watch<TransactionCategoryCatalogCubit>()
+                        .state
+                        .canManage;
+                    final horizontalSpacing = hasCategories
+                        ? AppSpacing.xs
+                        : AppSpacing.xm;
+                    final isCompactSortLabel = constraints.maxWidth < 400;
+                    final compactActionPadding = isCompactSortLabel
+                        ? AppSpacing.xs
+                        : AppSpacing.md;
+
+                    return SizedBox(
+                      height: AppSizes.buttonSm,
+                      child: Row(
+                        children: [
+                            Expanded(
+                              child: FtButton(
+                                onPressed: _openFiltersBottomSheet,
+                                label: 'Filtros',
+                                icon: const Icon(
+                                  Icons.filter_alt_outlined,
+                                  size: AppSizes.iconSm,
+                                ),
+                                size: FtButtonSize.medium,
+                                fullWidth: true,
                               ),
                             ),
+                          SizedBox(width: horizontalSpacing),
+                          if (hasCategories) ...[
+                            Expanded(
+                              child: FtButton(
+                                onPressed: () => _openCategoriesPage(context),
+                                label: 'Categorias',
+                                icon: const Icon(
+                                  Icons.category_outlined,
+                                  size: AppSizes.iconSm,
+                                ),
+                                size: FtButtonSize.medium,
+                                fullWidth: true,
+                              ),
+                            ),
+                            SizedBox(width: horizontalSpacing),
                           ],
-                        ),
+                          Expanded(
+                            child: PopupMenuButton<TransactionSortOrder>(
+                              tooltip: 'Ordenar',
+                              onSelected: _updateSortOrder,
+                              itemBuilder: (context) => const [
+                                PopupMenuItem(
+                                  value: TransactionSortOrder.newestFirst,
+                                  child: Text('Mais recentes'),
+                                ),
+                                PopupMenuItem(
+                                  value: TransactionSortOrder.oldestFirst,
+                                  child: Text('Mais antigas'),
+                                ),
+                              ],
+                              child: Container(
+                                height: AppSizes.buttonLg,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.xs,
+                                  vertical: AppSpacing.xm,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(
+                                    AppBorders.radiusS,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: compactActionPadding,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.swap_vert,
+                                        color: colorScheme.onPrimary,
+                                        size: AppSizes.iconSm,
+                                      ),
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Expanded(
+                                        child: Text(
+                                          _currentSortLabel(
+                                            compact: isCompactSortLabel,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          style: textTheme.labelMedium
+                                              ?.copyWith(
+                                                color: colorScheme.onPrimary,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
               Expanded(
@@ -173,9 +231,8 @@ class _TransactionsViewState extends State<TransactionsView> {
                           AppSpacing.md,
                         ),
                         itemCount: transactions.length,
-                        separatorBuilder: (_, _) => const SizedBox(
-                          height: AppSpacing.xm,
-                        ),
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(height: AppSpacing.xm),
                         itemBuilder: (context, index) {
                           final transaction = transactions[index];
                           return TransactionListItem(
@@ -199,9 +256,14 @@ class _TransactionsViewState extends State<TransactionsView> {
     BuildContext context,
     Transaction transaction,
   ) async {
+    final transactionRepository = context.read<TransactionRepository>();
+
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => TransactionFormPage(transaction: transaction),
+        builder: (_) => RepositoryProvider<TransactionRepository>.value(
+          value: transactionRepository,
+          child: TransactionFormPage(transaction: transaction),
+        ),
       ),
     );
 
@@ -214,12 +276,30 @@ class _TransactionsViewState extends State<TransactionsView> {
     }
   }
 
+  Future<void> _openCategoriesPage(BuildContext context) async {
+    final categoryCatalogCubit = context
+        .read<TransactionCategoryCatalogCubit>();
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider<TransactionCategoryCatalogCubit>.value(
+          value: categoryCatalogCubit,
+          child: const TransactionCategoriesPage(),
+        ),
+      ),
+    );
+  }
+
   Future<void> _openFiltersBottomSheet() async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       builder: (context) {
+        final categoryCatalog = context
+            .read<TransactionCategoryCatalogCubit>()
+            .state
+            .catalog;
         TransactionType? draftType = _currentQuery.type;
         String? draftCategoryId = _currentQuery.categoryId;
         TransactionPeriodFilter? draftPeriod = _currentQuery.period;
@@ -232,21 +312,11 @@ class _TransactionsViewState extends State<TransactionsView> {
             return true;
           }
 
-          return TransactionCategories.all.any(
-            (category) => category.id == categoryId && category.type == type,
-          );
+          return categoryCatalog.containsCompatible(categoryId, type);
         }
 
         List<TransactionCategory> availableDraftCategories() {
-          if (draftType == TransactionType.income) {
-            return TransactionCategories.incomeCategories;
-          }
-
-          if (draftType == TransactionType.expense) {
-            return TransactionCategories.expenseCategories;
-          }
-
-          return TransactionCategories.all;
+          return categoryCatalog.byType(draftType);
         }
 
         return StatefulBuilder(
@@ -266,7 +336,7 @@ class _TransactionsViewState extends State<TransactionsView> {
                     children: [
                       Text(
                         'Filtrar Transações',
-                        style: Theme.of(context).textTheme.titleLarge
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: AppSpacing.md + AppSpacing.xs),
                       Text(
@@ -398,7 +468,9 @@ class _TransactionsViewState extends State<TransactionsView> {
                           ),
                           ...availableDraftCategories().map(
                             (category) => FtChoiceChip(
-                              icon:TransactionCategoryIconMapper.fromCategory(category),
+                              icon: TransactionCategoryIconMapper.fromCategory(
+                                category,
+                              ),
                               label: category.label,
                               selected: draftCategoryId == category.id,
                               onSelected: (_) {
@@ -480,12 +552,12 @@ class _TransactionsViewState extends State<TransactionsView> {
     );
   }
 
-  String _currentSortLabel() {
+  String _currentSortLabel({bool compact = false}) {
     switch (_currentQuery.sortOrder) {
       case TransactionSortOrder.oldestFirst:
-        return 'Mais antigas';
+        return compact ? 'Antigas' : 'Mais antigas';
       case TransactionSortOrder.newestFirst:
-        return 'Mais recentes';
+        return compact ? 'Recentes' : 'Mais recentes';
     }
   }
 

@@ -9,6 +9,7 @@ class Transaction {
     required this.date,
     required this.description,
     required this.category,
+    this.updatedAt,
   });
 
   final String id;
@@ -17,6 +18,7 @@ class Transaction {
   final DateTime date;
   final String description;
   final TransactionCategory category;
+  final DateTime? updatedAt;
 
   bool get isIncome => type == TransactionType.income;
   bool get isExpense => type == TransactionType.expense;
