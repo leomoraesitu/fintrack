@@ -38,6 +38,24 @@ Exemplos provaveis:
 - listagem de transacoes
 - dashboard com resumo financeiro
 
+## Uso atual no projeto
+
+No estado atual do FinTrack, o exemplo concreto de uso de Cubit esta no catalogo de categorias da feature de transacoes.
+
+- `TransactionCategoryCatalogCubit` centraliza um estado simples: o catalogo carregado e a permissao de gerenciamento
+- a UI chama metodos diretos como `load()` e `addCategory(...)`, sem modelar eventos separados
+- o estado e consumido na tela de categorias com `BlocBuilder`
+- a mesma instancia do Cubit e reaproveitada entre listagem, filtros e tela dedicada de categorias
+
+Arquivos de referencia:
+
+- `lib/features/transactions/presentation/cubit/transaction_category_catalog_cubit.dart`
+- `lib/features/transactions/presentation/cubit/transaction_category_catalog_state.dart`
+- `lib/features/transactions/presentation/pages/transaction_categories_page.dart`
+- `lib/app/app.dart`
+
+Nos fluxos mais ricos do projeto, como autenticacao, dashboard, formulario e listagem de transacoes, a implementacao atual usa Bloc por exigir eventos explicitos, validacoes e mais variacoes de estado.
+
 ## Fronteiras de responsabilidade
 
 - a UI dispara eventos ou interage com Cubits

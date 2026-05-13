@@ -97,3 +97,10 @@ Permitir ao usuario registrar, listar, editar e excluir receitas e despesas, com
 - gerenciamento de estado para formulario e listagem
 - persistencia local no modo demo e repositorio remoto com Firestore para contas autenticadas
 - tratamento de conflito no formulario via estado explicito, resumo das diferencas, recarga da versao remota e reaplicacao do rascunho local
+- um Cubit compartilhado para manter o catalogo de categorias sincronizado entre formulario, filtros e tela dedicada de categorias
+
+## Implementacao atual de estado para categorias
+
+O catalogo de categorias autenticado e mantido por um Cubit compartilhado na camada de presentation. Esse Cubit carrega o catalogo inicial, permite criar novas categorias e publica o estado atualizado para as telas que dependem do mesmo conjunto de categorias.
+
+Na pratica, isso permite que formulario, filtros e tela de categorias enxerguem o mesmo catalogo em memoria durante a sessao atual, refletindo imediatamente a carga inicial e a criacao de novas categorias sem duplicar logica na UI.

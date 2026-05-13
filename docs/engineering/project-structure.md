@@ -81,6 +81,7 @@ features/transactions/
     pages/
     widgets/
     bloc/
+    cubit/
   domain/
     entities/
     repositories/
@@ -90,6 +91,11 @@ features/transactions/
     datasources/
     repositories/
 ```
+
+O uso de `bloc/` e `cubit/` deve seguir a complexidade do fluxo da feature:
+
+- `cubit/` para estados simples e locais
+- `bloc/` para fluxos com multiplos eventos, validacoes e efeitos assincronos
 
 ## Critero de evolucao
 

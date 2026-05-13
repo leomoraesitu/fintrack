@@ -164,6 +164,18 @@ flowchart TD
   Workflow -. governa .-> Data
 ```
 
+### Gerenciamento de estado na prática
+
+O projeto usa `flutter_bloc` como estratégia principal de gerenciamento de estado, escolhendo `Cubit` ou `Bloc` conforme a complexidade do fluxo.
+
+- `Cubit` é usado para estados simples e locais, com poucas transições previsíveis e chamadas diretas por método.
+- `Bloc` é usado para fluxos com múltiplos eventos, validações e efeitos assíncronos mais explícitos.
+
+Exemplo atual no código:
+
+- o catálogo de categorias usa `TransactionCategoryCatalogCubit`, responsável por carregar o catálogo e adicionar novas categorias para a UI autenticada
+- autenticação, dashboard, formulário e listagem de transações usam `Bloc`, pois possuem fluxos mais ricos e estados mais explícitos
+
 ## Direção de entrega
 
 ```mermaid
@@ -215,6 +227,8 @@ O conjunto completo de referências visuais e suas correspondências funcionais 
 - Material Design
 - arquitetura em camadas orientada a features
 - `flutter_bloc` como estratégia de gerenciamento de estado
+- `Cubit` para estados simples e locais, como o catálogo de categorias
+- `Bloc` para autenticação, dashboard e fluxos principais de transações
 - `shared_preferences` para persistência local (ver [ADR-003](docs/adr/adr-003-persistencia-local.md))
 - `firebase_core`, `firebase_auth`, `cloud_firestore` para backend e autenticação (ver [ADR-006](docs/adr/adr-006-adocao-firebase.md))
 - `flutter_test` para testes de widget
